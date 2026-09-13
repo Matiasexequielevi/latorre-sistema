@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Nuevo producto
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #111827;
+    }
+
+    .top {
+      background: #111827;
+      color: white;
+      padding: 20px 28px;
+    }
+
+    .top h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .top p {
+      margin: 5px 0 0;
+      color: #9ca3af;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px 40px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+      font-size: 27px;
+    }
+
+    .back {
+      color: #374151;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .card {
+      background: white;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 16px;
+
+      padding: 25px;
+    }
+
+    .error {
+      margin-bottom: 20px;
+
+      padding: 13px 15px;
+
+      border-radius: 10px;
+
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 18px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      color: #374151;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+
+      border:
+        1px solid #d1d5db;
+
+      border-radius: 10px;
+
+      padding: 12px 13px;
+
+      font-size: 15px;
+
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #111827;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(17, 24, 39, .07);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .section-title {
+      grid-column: 1 / -1;
+
+      margin-top: 7px;
+      padding-top: 18px;
+
+      border-top:
+        1px solid #e5e7eb;
+
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .actions {
+      margin-top: 24px;
+
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 43px;
+
+      padding: 0 18px;
+
+      border-radius: 10px;
+
+      border: none;
+
+      text-decoration: none;
+
+      font-size: 14px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .btn-light {
+      background: white;
+      color: #374151;
+
+      border:
+        1px solid #d1d5db;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    @media (max-width: 700px) {
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full,
+      .section-title {
+        grid-column: auto;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="top">
+
+  <h1>
+    LA TORRE
+  </h1>
+
+  <p>
+    Sistema Multisucursal
+  </p>
+
+</header>
+
+<main class="container">
+
+  <div class="page-header">
+
+    <h2>
+      Nuevo producto
+    </h2>
+
+    <a
+      class="back"
+      href="/productos"
+    >
+      ← Volver
+    </a>
+
+  </div>
+
+  <div class="card">
+
+    <% if (error) { %>
+
+      <div class="error">
+        <%= error %>
+      </div>
+
+    <% } %>
+
+    <form
+      method="POST"
+      action="/productos/nuevo"
+    >
+
+      <div class="grid">
+
+        <div>
+
+          <label>
+            Código interno
+          </label>
+
+          <input
+            type="text"
+            name="codigo_interno"
+            value="<%= datos.codigo_interno || '' %>"
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Código de barras
+          </label>
+
+          <input
+            type="text"
+            name="codigo_barras"
+            value="<%= datos.codigo_barras || '' %>"
+            autofocus
+          >
+
+        </div>
+
+        <div class="full">
+
+          <label>
+            Descripción *
+          </label>
+
+          <input
+            type="text"
+            name="descripcion"
+            value="<%= datos.descripcion || '' %>"
+            required
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Categoría
+          </label>
+
+          <input
+            type="text"
+            name="categoria"
+            list="lista-categorias"
+            value="<%= datos.categoria || '' %>"
+          >
+
+          <datalist id="lista-categorias">
+
+            <% categorias.forEach(item => { %>
+
+              <option value="<%= item.nombre %>">
+
+            <% }) %>
+
+          </datalist>
+
+        </div>
+
+        <div>
+
+          <label>
+            Marca
+          </label>
+
+          <input
+            type="text"
+            name="marca"
+            list="lista-marcas"
+            value="<%= datos.marca || '' %>"
+          >
+
+          <datalist id="lista-marcas">
+
+            <% marcas.forEach(item => { %>
+
+              <option value="<%= item.nombre %>">
+
+            <% }) %>
+
+          </datalist>
+
+          <label>Proveedor</label>
+          <input type="text" name="proveedor" list="lista-proveedores" value="<%= datos.proveedor || '' %>" placeholder="Proveedor">
+          <datalist id="lista-proveedores">
+            <% (typeof proveedores !== "undefined" ? proveedores : []).forEach(item => { %><option value="<%= item.nombre %>"><% }) %>
+          </datalist>
+
+        </div>
+
+        <div class="section-title">
+          Precios
+        </div>
+
+        <div>
+
+          <label>
+            Precio de compra
+          </label>
+
+          <input
+            type="number"
+            name="precio_compra"
+            step="0.01"
+            min="0"
+            value="<%= datos.precio_compra || 0 %>"
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Precio efectivo
+          </label>
+
+          <input
+            type="number"
+            name="precio_efectivo"
+            step="0.01"
+            min="0"
+            value="<%= datos.precio_efectivo || 0 %>"
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Precio tarjeta
+          </label>
+
+          <input
+            type="number"
+            name="precio_tarjeta"
+            step="0.01"
+            min="0"
+            value="<%= datos.precio_tarjeta || 0 %>"
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Stock mínimo
+          </label>
+
+          <input
+            type="number"
+            name="stock_minimo"
+            step="0.001"
+            min="0"
+            value="<%= datos.stock_minimo || 0 %>"
+          >
+
+        </div>
+
+        <div class="section-title">
+          Depósito
+        </div>
+
+        <div class="full">
+
+          <label>
+            Ubicación física en depósito
+          </label>
+
+          <input
+            type="text"
+            name="ubicacion_deposito"
+            placeholder="Ej: Pasillo 2 - Estante B"
+            value="<%= datos.ubicacion_deposito || '' %>"
+          >
+
+        </div>
+
+        <div class="full">
+
+          <label>
+            Observaciones
+          </label>
+
+          <textarea
+            name="observaciones"
+          ><%= datos.observaciones || '' %></textarea>
+
+        </div>
+
+      </div>
+
+      <div class="actions">
+
+        <a
+          class="btn btn-light"
+          href="/productos"
+        >
+          Cancelar
+        </a>
+
+        <button
+          class="btn btn-primary"
+          type="submit"
+        >
+          Guardar producto
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+LA TORRE - ACTUALIZACIÓN SOLICITADA POR EL DUEÑO
+
+1) Ubicaciones reales
+- Florida Local
+- Depósito Florida
+- Delfín Gallo Local
+- Depósito Delfín Gallo
+
+La migración conserva los IDs de las ubicaciones anteriores para no perder stock:
+Florida -> Florida Local
+Depósito -> Depósito Florida
+Delfín Gallo -> Delfín Gallo Local
+Se crea Depósito Delfín Gallo en 0.
+
+2) Usuarios
+Los empleados siguen asignados a su local. En transferencias pueden operar únicamente con ubicaciones de su propia sucursal (local + depósito). El dueño conserva acceso global.
+
+3) Productos
+- Edición rápida de Compra/Efectivo/Tarjeta: escribir y ENTER.
+- Selección múltiple de productos.
+- Cambio masivo por porcentaje, suma/resta en pesos o precio fijo.
+- Filtros por marca, proveedor y categoría.
+- Se agregó Proveedor al modelo y formularios de producto.
+
+4) Caja
+- Empleados venden siempre desde el local asignado en su usuario.
+- Precio unitario editable antes de confirmar la venta.
+- Se guarda precio de lista y precio realmente vendido para auditoría.
+- Flete opcional con costo; se suma al total interno y no se muestra como renglón separado en el comprobante simple.
+
+PRIMER INICIO
+1. Hacer una copia de seguridad de PostgreSQL antes de arrancar esta versión.
+2. Reemplazar el proyecto por esta versión (conservar .env correcto).
+3. Ejecutar: npm install
+4. Ejecutar: npm run dev
+5. Al iniciar, database/init.js realiza la migración automáticamente.
+6. Verificar Stock antes de realizar ventas nuevas.
+
+IMPORTANTE
+No borrar la base actual. La migración está diseñada para conservar productos, ventas y stock existentes.

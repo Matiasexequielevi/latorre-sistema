@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Presupuestos
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .topbar {
+      min-height: 72px;
+      background: #111827;
+      color: white;
+      padding: 0 26px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .brand span {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .usuario {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .usuario-info {
+      text-align: right;
+    }
+
+    .usuario-info strong,
+    .usuario-info span {
+      display: block;
+    }
+
+    .usuario-info span {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .logout {
+      border: 1px solid #374151;
+      border-radius: 9px;
+      padding: 9px 12px;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 72px);
+    }
+
+    .sidebar {
+      width: 235px;
+      flex-shrink: 0;
+      background: white;
+      border-right: 1px solid #e5e7eb;
+      padding: 20px 14px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 12px 14px;
+      margin-bottom: 5px;
+      border-radius: 9px;
+      color: #374151;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar a.active {
+      background: #111827;
+      color: white;
+    }
+
+    .separator {
+      height: 1px;
+      margin: 14px 8px;
+      background: #e5e7eb;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 0;
+      padding: 28px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+      color: #6b7280;
+    }
+
+    .btn {
+      min-height: 42px;
+      padding: 0 15px;
+      border: none;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-light {
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .label {
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .value {
+      margin-top: 8px;
+      font-size: 27px;
+      font-weight: 800;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr repeat(3, 180px) auto;
+      gap: 10px;
+      padding: 15px;
+      margin-bottom: 18px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+    }
+
+    input,
+    select {
+      min-height: 42px;
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      background: white;
+    }
+
+    .table-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1000px;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px;
+      background: #f9fafb;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f1f3;
+      font-size: 13px;
+    }
+
+    .badge {
+      padding: 5px 8px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-block;
+    }
+
+    .activo {
+      background: #eff8ff;
+      color: #175cd3;
+    }
+
+    .convertido {
+      background: #ecfdf3;
+      color: #067647;
+    }
+
+    .cancelado,
+    .vencido {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .precio {
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .empty {
+      padding: 40px;
+      text-align: center;
+      color: #9ca3af;
+    }
+
+    @media(max-width:760px) {
+
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .cards,
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .page-header {
+        flex-direction: column;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <h1>LA TORRE</h1>
+
+    <span>
+      Sistema Multisucursal
+    </span>
+
+  </div>
+
+  <div class="usuario">
+
+    <div class="usuario-info">
+
+      <strong>
+        <%= usuario.nombre %>
+      </strong>
+
+      <span>
+        <%= usuario.rol === "dueno"
+          ? "Dueño · Todas las ubicaciones"
+          : usuario.ubicacion
+        %>
+      </span>
+
+    </div>
+
+    <form
+      action="/logout"
+      method="POST"
+    >
+      <button
+        class="logout"
+        type="submit"
+      >
+        Salir
+      </button>
+    </form>
+
+  </div>
+
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <a href="/dashboard">Inicio</a>
+    <a href="/caja">Caja</a>
+    <a href="/ventas">Ventas</a>
+
+    <a
+      href="/presupuestos"
+      class="active"
+    >
+      Presupuestos
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/productos">Productos</a>
+    <a href="/stock">Stock</a>
+    <a href="/transferencias">Transferencias</a>
+    <a href="/ingresos">Ingreso de mercadería</a>
+
+    <div class="separator"></div>
+
+    <a href="/reportes">Reportes</a>
+    <a href="/movimientos">Historial</a>
+
+    <% if (usuario.rol === "dueno") { %>
+      <a href="/tarjetas">Tarjetas y cuotas</a>
+    <% } %>
+
+  </aside>
+
+  <main class="content">
+
+    <div class="page-header">
+
+      <div>
+
+        <h2>
+          Presupuestos
+        </h2>
+
+        <p>
+          Cotizaciones realizadas a clientes.
+        </p>
+
+      </div>
+
+      <a
+        href="/presupuestos/nuevo"
+        class="btn btn-primary"
+      >
+        + Nuevo presupuesto
+      </a>
+
+    </div>
+
+    <section class="cards">
+
+      <div class="card">
+
+        <div class="label">
+          PRESUPUESTOS ACTIVOS
+        </div>
+
+        <div class="value">
+          <%= resumen.activos %>
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <div class="label">
+          VALOR ACTIVO
+        </div>
+
+        <div class="value">
+
+          $<%= Number(
+            resumen.totalActivos
+          ).toLocaleString(
+            "es-AR",
+            {
+              maximumFractionDigits: 2
+            }
+          ) %>
+
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <div class="label">
+          CONVERTIDOS EN VENTA
+        </div>
+
+        <div class="value">
+          <%= resumen.convertidos %>
+        </div>
+
+      </div>
+
+    </section>
+
+    <form
+      method="GET"
+      class="filters"
+    >
+
+      <input
+        type="search"
+        name="buscar"
+        value="<%= filtros.buscar %>"
+        placeholder="Número, cliente, DNI, teléfono..."
+      >
+
+      <input
+        type="date"
+        name="desde"
+        value="<%= filtros.desde %>"
+      >
+
+      <input
+        type="date"
+        name="hasta"
+        value="<%= filtros.hasta %>"
+      >
+
+      <select name="estado">
+
+        <option value="">
+          Todos
+        </option>
+
+        <option
+          value="activo"
+          <%= filtros.estado === "activo" ? "selected" : "" %>
+        >
+          Activos
+        </option>
+
+        <option
+          value="convertido"
+          <%= filtros.estado === "convertido" ? "selected" : "" %>
+        >
+          Convertidos
+        </option>
+
+        <option
+          value="cancelado"
+          <%= filtros.estado === "cancelado" ? "selected" : "" %>
+        >
+          Cancelados
+        </option>
+
+      </select>
+
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Filtrar
+      </button>
+
+    </form>
+
+    <section class="table-card">
+
+      <% if (
+        presupuestos.length === 0
+      ) { %>
+
+        <div class="empty">
+          No hay presupuestos para mostrar.
+        </div>
+
+      <% } else { %>
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>N°</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Sucursal</th>
+              <th>Vendedor</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th></th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <% presupuestos.forEach(
+              presupuesto => {
+            %>
+
+              <tr>
+
+                <td>
+                  <strong>
+                    #<%= presupuesto.numero %>
+                  </strong>
+                </td>
+
+                <td>
+
+                  <%= new Date(
+                    presupuesto.created_at
+                  ).toLocaleString(
+                    "es-AR"
+                  ) %>
+
+                </td>
+
+                <td>
+                  <%= presupuesto.cliente_nombre || "-" %>
+                </td>
+
+                <td>
+                  <%= presupuesto.ubicacion %>
+                </td>
+
+                <td>
+                  <%= presupuesto.vendedor %>
+                </td>
+
+                <td>
+                  <%= presupuesto.items %>
+                </td>
+
+                <td class="precio">
+
+                  $<%= Number(
+                    presupuesto.total
+                  ).toLocaleString(
+                    "es-AR",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }
+                  ) %>
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="badge <%= presupuesto.estado %>"
+                  >
+                    <%= presupuesto.estado %>
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="/presupuestos/<%= presupuesto.id %>"
+                    class="btn btn-light"
+                  >
+                    Ver
+                  </a>
+
+                </td>
+
+              </tr>
+
+            <% }) %>
+
+          </tbody>
+
+        </table>
+
+      <% } %>
+
+    </section>
+
+  </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Stock
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+
+      background: #f3f4f6;
+
+      color: #111827;
+
+      font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+    }
+
+    .topbar {
+      min-height: 72px;
+
+      background: #111827;
+
+      color: white;
+
+      padding: 0 26px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .brand span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #9ca3af;
+
+      font-size: 12px;
+    }
+
+    .usuario {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .usuario-info {
+      text-align: right;
+    }
+
+    .usuario-info strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .usuario-info span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #9ca3af;
+
+      font-size: 12px;
+    }
+
+    .logout {
+      border:
+        1px solid #374151;
+
+      border-radius: 9px;
+
+      padding: 9px 12px;
+
+      background: #1f2937;
+
+      color: white;
+
+      cursor: pointer;
+    }
+
+    .layout {
+      display: flex;
+
+      min-height:
+        calc(100vh - 72px);
+    }
+
+    .sidebar {
+      width: 235px;
+
+      flex-shrink: 0;
+
+      background: white;
+
+      border-right:
+        1px solid #e5e7eb;
+
+      padding: 20px 14px;
+    }
+
+    .sidebar a {
+      display: block;
+
+      margin-bottom: 5px;
+
+      padding: 12px 14px;
+
+      border-radius: 9px;
+
+      text-decoration: none;
+
+      color: #374151;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar a:hover {
+      background: #f3f4f6;
+    }
+
+    .sidebar a.active {
+      background: #111827;
+      color: white;
+    }
+
+    .separator {
+      height: 1px;
+
+      margin: 14px 8px;
+
+      background: #e5e7eb;
+    }
+
+    .content {
+      flex: 1;
+
+      min-width: 0;
+
+      padding: 28px;
+    }
+
+    .page-header {
+      margin-bottom: 22px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+
+      font-size: 28px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+
+      color: #6b7280;
+    }
+
+    .alert {
+      margin-bottom: 18px;
+
+      padding: 13px 16px;
+
+      border-radius: 10px;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .alert-ok {
+      background: #ecfdf3;
+      color: #067647;
+      border: 1px solid #abefc6;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .cards {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(0, 1fr)
+        );
+
+      gap: 15px;
+
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 14px;
+
+      padding: 18px;
+    }
+
+    .card .label {
+      color: #6b7280;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card .value {
+      margin-top: 8px;
+
+      font-size: 27px;
+      font-weight: 800;
+    }
+
+    .filters {
+      display: flex;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 18px;
+
+      padding: 15px;
+
+      background: white;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 14px;
+    }
+
+    .search {
+      min-width: 280px;
+
+      flex: 1;
+
+      height: 42px;
+
+      padding: 0 13px;
+
+      border:
+        1px solid #d1d5db;
+
+      border-radius: 9px;
+
+      font-size: 14px;
+    }
+
+    .btn {
+      min-height: 42px;
+
+      padding: 0 15px;
+
+      border: none;
+
+      border-radius: 9px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-light {
+      background: white;
+
+      color: #374151;
+
+      border:
+        1px solid #d1d5db;
+    }
+
+    .table-card {
+      background: white;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 14px;
+
+      overflow: hidden;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+
+      min-width: 1050px;
+
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 13px;
+
+      text-align: left;
+
+      background: #f9fafb;
+
+      color: #6b7280;
+
+      border-bottom:
+        1px solid #e5e7eb;
+
+      font-size: 11px;
+
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 13px;
+
+      border-bottom:
+        1px solid #f1f2f4;
+
+      vertical-align: middle;
+
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .producto {
+      font-weight: 700;
+    }
+
+    .detalle {
+      margin-top: 4px;
+
+      color: #9ca3af;
+
+      font-size: 11px;
+    }
+
+    .cantidad {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .stock-bajo {
+      color: #b42318;
+
+      background: #fef3f2;
+
+      border-radius: 7px;
+
+      padding: 5px 8px;
+
+      display: inline-block;
+    }
+
+    .stock-ok {
+      color: #111827;
+
+      background: #f3f4f6;
+
+      border-radius: 7px;
+
+      padding: 5px 8px;
+
+      display: inline-block;
+    }
+
+    .btn-adjust {
+      padding: 7px 10px;
+
+      border: 1px solid #d1d5db;
+
+      background: white;
+
+      border-radius: 7px;
+
+      cursor: pointer;
+
+      font-weight: 700;
+
+      font-size: 12px;
+    }
+
+    .empty {
+      padding: 45px 20px;
+
+      text-align: center;
+
+      color: #9ca3af;
+    }
+
+    /* =======================================
+       MODAL
+    ======================================= */
+
+    .modal {
+      position: fixed;
+
+      inset: 0;
+
+      background:
+        rgba(17, 24, 39, .55);
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+
+      max-width: 480px;
+
+      background: white;
+
+      border-radius: 16px;
+
+      padding: 23px;
+
+      box-shadow:
+        0 25px 80px
+        rgba(0,0,0,.25);
+    }
+
+    .modal-header {
+      display: flex;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        flex-start;
+
+      gap: 15px;
+
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .modal-header p {
+      margin: 6px 0 0;
+
+      color: #6b7280;
+
+      font-size: 13px;
+    }
+
+    .cerrar {
+      border: none;
+
+      background: transparent;
+
+      font-size: 25px;
+
+      cursor: pointer;
+
+      color: #6b7280;
+    }
+
+    .campo {
+      margin-bottom: 16px;
+    }
+
+    .campo label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      color: #374151;
+    }
+
+    .campo input,
+    .campo select {
+      width: 100%;
+
+      min-height: 43px;
+
+      border:
+        1px solid #d1d5db;
+
+      border-radius: 9px;
+
+      padding: 0 12px;
+
+      font-size: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+
+      justify-content:
+        flex-end;
+
+      gap: 9px;
+
+      margin-top: 22px;
+    }
+
+    @media (
+      max-width: 1000px
+    ) {
+
+      .cards {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+    }
+
+    @media (
+      max-width: 760px
+    ) {
+
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .topbar {
+        padding: 14px 18px;
+      }
+
+      .cards {
+        grid-template-columns:
+          1fr;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <h1>
+      LA TORRE
+    </h1>
+
+    <span>
+      Sistema Multisucursal
+    </span>
+
+  </div>
+
+  <div class="usuario">
+
+    <div class="usuario-info">
+
+      <strong>
+        <%= usuario.nombre %>
+      </strong>
+
+      <span>
+
+        <% if (
+          usuario.rol === "dueno"
+        ) { %>
+
+          Dueño · Todas las ubicaciones
+
+        <% } else { %>
+
+          <%= usuario.ubicacion %>
+
+        <% } %>
+
+      </span>
+
+    </div>
+
+    <form
+      action="/logout"
+      method="POST"
+    >
+
+      <button
+        class="logout"
+        type="submit"
+      >
+        Salir
+      </button>
+
+    </form>
+
+  </div>
+
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <a href="/dashboard">
+      Inicio
+    </a>
+
+    <a href="/caja">
+      Caja
+    </a>
+
+    <a href="/ventas">
+      Ventas
+    </a>
+
+    <a href="/presupuestos">
+      Presupuestos
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/productos">
+      Productos
+    </a>
+
+    <a
+      href="/stock"
+      class="active"
+    >
+      Stock
+    </a>
+
+    <a href="/transferencias">
+      Transferencias
+    </a>
+
+    <a href="/ingresos">
+      Ingreso de mercadería
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/reportes">
+      Reportes
+    </a>
+
+    <a href="/movimientos">
+      Historial
+    </a>
+
+  </aside>
+
+  <main class="content">
+
+    <div class="page-header">
+
+      <h2>
+        Stock
+      </h2>
+
+      <p>
+
+        <% if (
+          usuario.rol === "dueno"
+        ) { %>
+
+          Stock actual de los dos locales y sus depósitos.
+
+        <% } else { %>
+
+          Stock actual de
+          <%= usuario.ubicacion %>.
+
+        <% } %>
+
+      </p>
+
+    </div>
+
+    <% if (mensaje) { %>
+
+      <div class="alert alert-ok">
+        <%= mensaje %>
+      </div>
+
+    <% } %>
+
+    <% if (error) { %>
+
+      <div class="alert alert-error">
+        <%= error %>
+      </div>
+
+    <% } %>
+
+    <section class="cards">
+
+      <% if (
+        usuario.rol === "dueno"
+      ) { %>
+
+        <div class="card">
+
+          <div class="label">FLORIDA LOCAL</div>
+          <div class="value">
+            <%= resumen["Florida Local"] || 0 %>
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <div class="label">DEPÓSITO FLORIDA</div>
+          <div class="value"><%= resumen["Depósito Florida"] || 0 %>
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <div class="label">DELFÍN GALLO LOCAL</div>
+          <div class="value"><%= resumen["Delfín Gallo Local"] || 0 %>
+          </div>
+
+        </div>
+
+        <div class="card"><div class="label">DEPÓSITO DELFÍN GALLO</div><div class="value"><%= resumen["Depósito Delfín Gallo"] || 0 %></div></div>
+
+      <% } %>
+
+      <div class="card">
+
+        <div class="label">
+          STOCK TOTAL VISIBLE
+        </div>
+
+        <div class="value">
+          <%= resumen.total %>
+        </div>
+
+      </div>
+
+    </section>
+
+    <form
+      class="filters"
+      method="GET"
+      action="/stock"
+    >
+
+      <input
+        class="search"
+        type="search"
+        name="buscar"
+        value="<%= buscar %>"
+        placeholder="Buscar producto, código, código de barras, marca..."
+      >
+
+      <% if (soloBajo) { %>
+
+        <input
+          type="hidden"
+          name="bajo"
+          value="1"
+        >
+
+      <% } %>
+
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Buscar
+      </button>
+
+      <% if (!soloBajo) { %>
+
+        <a
+          class="btn btn-light"
+          href="/stock?bajo=1"
+        >
+          Ver stock bajo
+        </a>
+
+      <% } else { %>
+
+        <a
+          class="btn btn-light"
+          href="/stock"
+        >
+          Ver todo
+        </a>
+
+      <% } %>
+
+      <% if (buscar) { %>
+
+        <a
+          class="btn btn-light"
+          href="/stock<%= soloBajo ? '?bajo=1' : '' %>"
+        >
+          Limpiar
+        </a>
+
+      <% } %>
+
+    </form>
+
+    <section class="table-card">
+
+      <% if (
+        productos.length === 0
+      ) { %>
+
+        <div class="empty">
+
+          No hay productos
+          para mostrar.
+
+        </div>
+
+      <% } else { %>
+
+        <div class="table-scroll">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Código
+                </th>
+
+                <th>
+                  Producto
+                </th>
+
+                <th>
+                  Categoría
+                </th>
+
+                <th>
+                  Marca
+                </th>
+
+                <th>
+                  Ubicación
+                </th>
+
+                <th>
+                  Stock
+                </th>
+
+                <th>
+                  Mínimo
+                </th>
+
+                <% if (
+                  usuario.rol ===
+                  "dueno"
+                ) { %>
+
+                  <th>
+                    Acción
+                  </th>
+
+                <% } %>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <% productos.forEach(
+                producto => {
+              %>
+
+                <% producto.ubicaciones.forEach(
+                  ubicacion => {
+                %>
+
+                  <tr>
+
+                    <td>
+
+                      <strong>
+                        <%= producto.codigo_interno || "-" %>
+                      </strong>
+
+                      <% if (
+                        producto.codigo_barras
+                      ) { %>
+
+                        <div class="detalle">
+                          <%= producto.codigo_barras %>
+                        </div>
+
+                      <% } %>
+
+                    </td>
+
+                    <td>
+
+                      <div class="producto">
+                        <%= producto.descripcion %>
+                      </div>
+
+                    </td>
+
+                    <td>
+                      <%= producto.categoria || "-" %>
+                    </td>
+
+                    <td>
+                      <%= producto.marca || "-" %>
+                    </td>
+
+                    <td>
+                      <strong>
+                        <%= ubicacion.ubicacion %>
+                      </strong>
+                    </td>
+
+                    <td class="cantidad">
+
+                      <% if (
+                        ubicacion.stock_bajo
+                      ) { %>
+
+                        <span class="stock-bajo">
+                          <%= ubicacion.cantidad %>
+                        </span>
+
+                      <% } else { %>
+
+                        <span class="stock-ok">
+                          <%= ubicacion.cantidad %>
+                        </span>
+
+                      <% } %>
+
+                    </td>
+
+                    <td>
+                      <%= producto.stock_minimo %>
+                    </td>
+
+                    <% if (
+                      usuario.rol ===
+                      "dueno"
+                    ) { %>
+
+                      <td>
+
+                        <button
+                          type="button"
+                          class="btn-adjust"
+
+                          data-producto-id="<%= producto.producto_id %>"
+
+                          data-producto="<%= producto.descripcion.replace(/"/g, '&quot;') %>"
+
+                          data-ubicacion-id="<%= ubicacion.ubicacion_id %>"
+
+                          data-ubicacion="<%= ubicacion.ubicacion %>"
+
+                          data-cantidad="<%= ubicacion.cantidad %>"
+
+                          onclick="abrirAjuste(this)"
+                        >
+                          Ajustar
+                        </button>
+
+                      </td>
+
+                    <% } %>
+
+                  </tr>
+
+                <% }) %>
+
+              <% }) %>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      <% } %>
+
+    </section>
+
+  </main>
+
+</div>
+
+<% if (
+  usuario.rol === "dueno"
+) { %>
+
+<div
+  class="modal"
+  id="modalAjuste"
+>
+
+  <div class="modal-card">
+
+    <div class="modal-header">
+
+      <div>
+
+        <h3>
+          Ajustar stock
+        </h3>
+
+        <p id="modalProducto">
+        </p>
+
+      </div>
+
+      <button
+        class="cerrar"
+        type="button"
+        onclick="cerrarAjuste()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <form
+      action="/stock/ajustar"
+      method="POST"
+    >
+
+      <input
+        type="hidden"
+        name="producto_id"
+        id="productoId"
+      >
+
+      <div class="campo">
+
+        <label>
+          Ubicación
+        </label>
+
+        <select
+          name="ubicacion_id"
+          id="ubicacionId"
+          required
+        >
+
+          <% ubicaciones.forEach(
+            ubicacion => {
+          %>
+
+            <option
+              value="<%= ubicacion.id %>"
+            >
+              <%= ubicacion.nombre %>
+            </option>
+
+          <% }) %>
+
+        </select>
+
+      </div>
+
+      <div class="campo">
+
+        <label>
+          Cantidad real actual
+        </label>
+
+        <input
+          type="number"
+          name="cantidad"
+          id="cantidad"
+          min="0"
+          step="0.001"
+          required
+        >
+
+      </div>
+
+      <div class="campo">
+
+        <label>
+          Motivo del ajuste
+        </label>
+
+        <input
+          type="text"
+          name="motivo"
+          placeholder="Ej: Conteo físico de inventario"
+          required
+        >
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn btn-light"
+          onclick="cerrarAjuste()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Guardar ajuste
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+
+  function abrirAjuste(
+    boton
+  ) {
+
+    const modal =
+      document.getElementById(
+        "modalAjuste"
+      );
+
+    document.getElementById(
+      "productoId"
+    ).value =
+      boton.dataset.productoId;
+
+    document.getElementById(
+      "modalProducto"
+    ).textContent =
+      boton.dataset.producto +
+      " · " +
+      boton.dataset.ubicacion;
+
+    document.getElementById(
+      "ubicacionId"
+    ).value =
+      boton.dataset.ubicacionId;
+
+    document.getElementById(
+      "cantidad"
+    ).value =
+      boton.dataset.cantidad;
+
+    modal.classList.add(
+      "active"
+    );
+
+    setTimeout(() => {
+
+      document.getElementById(
+        "cantidad"
+      ).focus();
+
+      document.getElementById(
+        "cantidad"
+      ).select();
+
+    }, 50);
+
+  }
+
+  function cerrarAjuste() {
+
+    document.getElementById(
+      "modalAjuste"
+    ).classList.remove(
+      "active"
+    );
+
+  }
+
+  document.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key === "Escape"
+      ) {
+        cerrarAjuste();
+      }
+
+    }
+  );
+
+  document.getElementById(
+    "modalAjuste"
+  ).addEventListener(
+    "click",
+    function(event) {
+
+      if (
+        event.target === this
+      ) {
+        cerrarAjuste();
+      }
+
+    }
+  );
+
+</script>
+
+<% } %>
+
+</body>
+
+</html>

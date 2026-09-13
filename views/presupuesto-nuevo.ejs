@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Nuevo presupuesto
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .top {
+      background: #111827;
+      color: white;
+      padding: 20px 28px;
+    }
+
+    .top h1 {
+      margin: 0;
+    }
+
+    .top p {
+      margin: 5px 0 0;
+      color: #9ca3af;
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: 28px auto;
+      padding: 0 20px 40px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      margin: 0;
+    }
+
+    .back {
+      color: #374151;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 43px;
+      padding: 9px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .buscar {
+      position: relative;
+      margin-top: 18px;
+    }
+
+    .buscar input {
+      border: 2px solid #111827;
+      height: 50px;
+      font-size: 15px;
+    }
+
+    .resultados {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 78px;
+      z-index: 100;
+      max-height: 300px;
+      overflow-y: auto;
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.15);
+    }
+
+    .resultado {
+      padding: 12px;
+      border-bottom: 1px solid #f0f1f3;
+      cursor: pointer;
+    }
+
+    .resultado:hover {
+      background: #f9fafb;
+    }
+
+    .resultado strong,
+    .resultado span {
+      display: block;
+    }
+
+    .resultado span {
+      margin-top: 4px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .table {
+      margin-top: 18px;
+      overflow-x: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f1f3;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #6b7280;
+      font-size: 11px;
+    }
+
+    .cantidad {
+      width: 90px;
+    }
+
+    .quitar {
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #b91c1c;
+      border-radius: 7px;
+      padding: 7px 9px;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      color: #9ca3af;
+      padding: 30px;
+    }
+
+    .totales {
+      max-width: 400px;
+      margin-left: auto;
+      margin-top: 20px;
+    }
+
+    .fila {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+    }
+
+    .total {
+      border-top: 2px solid #111827;
+      margin-top: 15px;
+      padding-top: 15px;
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .guardar {
+      border: none;
+      border-radius: 10px;
+      background: #111827;
+      color: white;
+      padding: 14px 22px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media(max-width:760px) {
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="top">
+
+  <h1>LA TORRE</h1>
+
+  <p>
+    Sistema Multisucursal
+  </p>
+
+</header>
+
+<main class="container">
+
+  <div class="header">
+
+    <h2>
+      Nuevo presupuesto
+    </h2>
+
+    <a
+      href="/presupuestos"
+      class="back"
+    >
+      ← Volver
+    </a>
+
+  </div>
+
+  <form
+    id="formPresupuesto"
+    method="POST"
+    action="/presupuestos"
+  >
+
+    <section class="card">
+
+      <div class="grid">
+
+        <% if (
+          usuario.rol === "dueno"
+        ) { %>
+
+          <div>
+
+            <label>
+              Sucursal
+            </label>
+
+            <select
+              name="ubicacion_id"
+              id="ubicacion"
+              required
+            >
+
+              <option value="">
+                Seleccionar...
+              </option>
+
+              <% ubicaciones.forEach(
+                u => {
+              %>
+
+                <option value="<%= u.id %>">
+                  <%= u.nombre %>
+                </option>
+
+              <% }) %>
+
+            </select>
+
+          </div>
+
+        <% } else { %>
+
+          <input
+            type="hidden"
+            id="ubicacion"
+            value="<%= usuario.ubicacion_id %>"
+          >
+
+        <% } %>
+
+        <div>
+
+          <label>
+            Cliente *
+          </label>
+
+          <input
+            type="text"
+            name="cliente_nombre"
+            required
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            DNI / CUIT
+          </label>
+
+          <input
+            type="text"
+            name="cliente_documento"
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Teléfono
+          </label>
+
+          <input
+            type="text"
+            name="cliente_telefono"
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Descuento %
+          </label>
+
+          <input
+            id="descuento"
+            type="number"
+            name="descuento_porcentaje"
+            min="0"
+            max="100"
+            step="0.01"
+            value="0"
+          >
+
+        </div>
+
+        <div>
+
+          <label>
+            Recargo %
+          </label>
+
+          <input
+            id="recargo"
+            type="number"
+            name="recargo_porcentaje"
+            min="0"
+            step="0.01"
+            value="0"
+          >
+
+        </div>
+
+      </div>
+
+      <div class="buscar">
+
+        <label>
+          Buscar o escanear producto
+        </label>
+
+        <input
+          id="buscarProducto"
+          type="text"
+          autocomplete="off"
+          placeholder="Código, código de barras o descripción..."
+        >
+
+        <div
+          id="resultados"
+          class="resultados"
+        >
+        </div>
+
+      </div>
+
+      <div class="table">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Producto</th>
+              <th>Stock actual</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+              <th></th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="detalle">
+
+            <tr>
+
+              <td
+                colspan="6"
+                class="empty"
+              >
+                Agregá productos al presupuesto.
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div class="totales">
+
+        <div class="fila">
+
+          <span>
+            Subtotal
+          </span>
+
+          <strong id="subtotal">
+            $0,00
+          </strong>
+
+        </div>
+
+        <div class="fila">
+
+          <span>
+            Descuento
+          </span>
+
+          <strong id="descuentoVista">
+            $0,00
+          </strong>
+
+        </div>
+
+        <div class="fila">
+
+          <span>
+            Recargo
+          </span>
+
+          <strong id="recargoVista">
+            $0,00
+          </strong>
+
+        </div>
+
+        <div class="fila total">
+
+          <span>
+            TOTAL
+          </span>
+
+          <strong id="total">
+            $0,00
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div style="margin-top:20px;">
+
+        <label>
+          Observaciones
+        </label>
+
+        <textarea
+          name="observaciones"
+        ></textarea>
+
+      </div>
+
+      <input
+        type="hidden"
+        name="items"
+        id="itemsJson"
+      >
+
+      <div class="acciones">
+
+        <button
+          type="submit"
+          class="guardar"
+        >
+          Guardar presupuesto
+        </button>
+
+      </div>
+
+    </section>
+
+  </form>
+
+</main>
+
+<script>
+
+  let carrito = [];
+
+  let timer = null;
+
+  const ubicacion =
+    document.getElementById(
+      "ubicacion"
+    );
+
+  const buscar =
+    document.getElementById(
+      "buscarProducto"
+    );
+
+  const resultados =
+    document.getElementById(
+      "resultados"
+    );
+
+  const detalle =
+    document.getElementById(
+      "detalle"
+    );
+
+  const descuento =
+    document.getElementById(
+      "descuento"
+    );
+
+  const recargo =
+    document.getElementById(
+      "recargo"
+    );
+
+  const itemsJson =
+    document.getElementById(
+      "itemsJson"
+    );
+
+  function dinero(
+    valor
+  ) {
+
+    return Number(
+      valor || 0
+    ).toLocaleString(
+      "es-AR",
+      {
+        style: "currency",
+        currency: "ARS"
+      }
+    );
+
+  }
+
+  buscar.addEventListener(
+    "input",
+    () => {
+
+      clearTimeout(timer);
+
+      timer =
+        setTimeout(
+          () =>
+            buscarProductos(
+              false
+            ),
+          220
+        );
+
+    }
+  );
+
+  buscar.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        buscarProductos(
+          true
+        );
+
+      }
+
+    }
+  );
+
+  async function buscarProductos(
+    automatico
+  ) {
+
+    const texto =
+      buscar.value.trim();
+
+    if (
+      !ubicacion.value
+    ) {
+
+      resultados.innerHTML =
+        '<div class="resultado">Seleccioná primero la sucursal.</div>';
+
+      resultados.style.display =
+        "block";
+
+      return;
+
+    }
+
+    if (!texto) {
+
+      resultados.style.display =
+        "none";
+
+      return;
+
+    }
+
+    const response =
+      await fetch(
+        `/presupuestos/api/productos?buscar=${encodeURIComponent(
+          texto
+        )}&ubicacion_id=${ubicacion.value}`
+      );
+
+    const productos =
+      await response.json();
+
+    if (
+      automatico
+    ) {
+
+      const exacto =
+        productos.find(
+          p =>
+            p.codigo_barras ===
+              texto ||
+            p.codigo_interno ===
+              texto
+        );
+
+      if (exacto) {
+
+        agregar(
+          exacto
+        );
+
+        return;
+
+      }
+
+      if (
+        productos.length === 1
+      ) {
+
+        agregar(
+          productos[0]
+        );
+
+        return;
+
+      }
+
+    }
+
+    resultados.innerHTML =
+      "";
+
+    productos.forEach(
+      producto => {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+        div.className =
+          "resultado";
+
+        div.innerHTML =
+          `
+            <strong>
+              ${producto.descripcion}
+            </strong>
+
+            <span>
+              ${producto.codigo_interno || "-"}
+              · Stock:
+              ${producto.stock}
+              ·
+              ${dinero(
+                producto.precio_efectivo
+              )}
+            </span>
+          `;
+
+        div.onclick =
+          () =>
+            agregar(
+              producto
+            );
+
+        resultados.appendChild(
+          div
+        );
+
+      }
+    );
+
+    resultados.style.display =
+      productos.length
+        ? "block"
+        : "none";
+
+  }
+
+  function agregar(
+    producto
+  ) {
+
+    const existente =
+      carrito.find(
+        item =>
+          item.producto_id ===
+          producto.id
+      );
+
+    if (existente) {
+
+      existente.cantidad++;
+
+    } else {
+
+      carrito.push({
+
+        producto_id:
+          producto.id,
+
+        descripcion:
+          producto.descripcion,
+
+        codigo:
+          producto.codigo_interno,
+
+        stock:
+          producto.stock,
+
+        precio:
+          producto.precio_efectivo,
+
+        cantidad:
+          1,
+
+      });
+
+    }
+
+    buscar.value =
+      "";
+
+    resultados.style.display =
+      "none";
+
+    render();
+
+    buscar.focus();
+
+  }
+
+  function render() {
+
+    detalle.innerHTML =
+      "";
+
+    if (
+      carrito.length === 0
+    ) {
+
+      detalle.innerHTML =
+        `
+          <tr>
+            <td
+              colspan="6"
+              class="empty"
+            >
+              Agregá productos al presupuesto.
+            </td>
+          </tr>
+        `;
+
+      actualizarTotales();
+
+      return;
+
+    }
+
+    carrito.forEach(
+      (
+        item,
+        index
+      ) => {
+
+        const tr =
+          document.createElement(
+            "tr"
+          );
+
+        tr.innerHTML =
+          `
+            <td>
+              <strong>
+                ${item.descripcion}
+              </strong>
+            </td>
+
+            <td>
+              ${item.stock}
+            </td>
+
+            <td>
+
+              <input
+                type="number"
+                class="cantidad"
+                min="0.001"
+                step="0.001"
+                value="${item.cantidad}"
+                data-index="${index}"
+              >
+
+            </td>
+
+            <td>
+              ${dinero(
+                item.precio
+              )}
+            </td>
+
+            <td>
+              <strong>
+                ${dinero(
+                  item.precio *
+                  item.cantidad
+                )}
+              </strong>
+            </td>
+
+            <td>
+
+              <button
+                type="button"
+                class="quitar"
+                data-remove="${index}"
+              >
+                Quitar
+              </button>
+
+            </td>
+          `;
+
+        detalle.appendChild(
+          tr
+        );
+
+      }
+    );
+
+    detalle
+      .querySelectorAll(
+        ".cantidad"
+      )
+      .forEach(
+        input => {
+
+          input.onchange =
+            () => {
+
+              const index =
+                Number(
+                  input.dataset.index
+                );
+
+              const cantidad =
+                Number(
+                  input.value
+                );
+
+              if (
+                cantidad > 0
+              ) {
+
+                carrito[index]
+                  .cantidad =
+                  cantidad;
+
+              }
+
+              render();
+
+            };
+
+        }
+      );
+
+    detalle
+      .querySelectorAll(
+        "[data-remove]"
+      )
+      .forEach(
+        boton => {
+
+          boton.onclick =
+            () => {
+
+              carrito.splice(
+                Number(
+                  boton.dataset.remove
+                ),
+                1
+              );
+
+              render();
+
+            };
+
+        }
+      );
+
+    actualizarTotales();
+
+  }
+
+  function actualizarTotales() {
+
+    const subtotal =
+      carrito.reduce(
+        (
+          total,
+          item
+        ) =>
+          total +
+          item.precio *
+          item.cantidad,
+        0
+      );
+
+    const descuentoP =
+      Number(
+        descuento.value
+      ) || 0;
+
+    const recargoP =
+      Number(
+        recargo.value
+      ) || 0;
+
+    const descuentoMonto =
+      subtotal *
+      descuentoP /
+      100;
+
+    const base =
+      subtotal -
+      descuentoMonto;
+
+    const recargoMonto =
+      base *
+      recargoP /
+      100;
+
+    const total =
+      base +
+      recargoMonto;
+
+    document.getElementById(
+      "subtotal"
+    ).textContent =
+      dinero(
+        subtotal
+      );
+
+    document.getElementById(
+      "descuentoVista"
+    ).textContent =
+      dinero(
+        descuentoMonto
+      );
+
+    document.getElementById(
+      "recargoVista"
+    ).textContent =
+      dinero(
+        recargoMonto
+      );
+
+    document.getElementById(
+      "total"
+    ).textContent =
+      dinero(
+        total
+      );
+
+  }
+
+  descuento.oninput =
+    actualizarTotales;
+
+  recargo.oninput =
+    actualizarTotales;
+
+  document
+    .getElementById(
+      "formPresupuesto"
+    )
+    .onsubmit =
+      event => {
+
+        if (
+          carrito.length === 0
+        ) {
+
+          event.preventDefault();
+
+          alert(
+            "Agregá al menos un producto."
+          );
+
+          return;
+
+        }
+
+        itemsJson.value =
+          JSON.stringify(
+            carrito.map(
+              item => ({
+                producto_id:
+                  item.producto_id,
+
+                cantidad:
+                  item.cantidad
+              })
+            )
+          );
+
+      };
+
+</script>
+
+</body>
+</html>

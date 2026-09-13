@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Tarjetas y cuotas
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .topbar {
+      min-height: 72px;
+      background: #111827;
+      color: white;
+      padding: 0 26px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 3px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .usuario {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .usuario-info {
+      text-align: right;
+    }
+
+    .usuario-info strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .usuario-info span {
+      display: block;
+      margin-top: 3px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .logout {
+      border: 1px solid #374151;
+      border-radius: 9px;
+      padding: 9px 12px;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 72px);
+    }
+
+    .sidebar {
+      width: 235px;
+      flex-shrink: 0;
+      background: white;
+
+      border-right:
+        1px solid #e5e7eb;
+
+      padding: 20px 14px;
+    }
+
+    .sidebar a {
+      display: block;
+      margin-bottom: 5px;
+      padding: 12px 14px;
+      border-radius: 9px;
+      text-decoration: none;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar a:hover {
+      background: #f3f4f6;
+    }
+
+    .sidebar a.active {
+      background: #111827;
+      color: white;
+    }
+
+    .separator {
+      height: 1px;
+      margin: 14px 8px;
+      background: #e5e7eb;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 0;
+      padding: 28px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+      color: #6b7280;
+    }
+
+    .alert {
+      margin-top: 18px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .alert-ok {
+      background: #ecfdf3;
+      color: #067647;
+      border: 1px solid #abefc6;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        360px
+        minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 15px;
+      padding: 20px;
+    }
+
+    .card h3 {
+      margin: 0 0 17px;
+      font-size: 17px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 43px;
+
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+
+      padding: 9px 12px;
+      font-size: 14px;
+    }
+
+    .btn {
+      min-height: 40px;
+      padding: 0 14px;
+
+      border: none;
+      border-radius: 9px;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-light {
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+
+    .btn-danger {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .full {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .tarjeta-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f1f3;
+    }
+
+    .tarjeta-item:last-child {
+      border-bottom: none;
+    }
+
+    .tarjeta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tarjeta-header strong {
+      font-size: 15px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .badge-ok {
+      background: #ecfdf3;
+      color: #067647;
+    }
+
+    .badge-off {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .config-form {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f9fafb;
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns:
+        1fr 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .table-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px;
+      background: #f9fafb;
+      color: #6b7280;
+
+      border-bottom:
+        1px solid #e5e7eb;
+
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f1f3;
+      font-size: 13px;
+    }
+
+    .empty {
+      padding: 35px;
+      text-align: center;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 900px) {
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 760px) {
+
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .topbar {
+        padding: 14px 18px;
+      }
+
+      .config-grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <h1>
+      LA TORRE
+    </h1>
+
+    <span>
+      Sistema Multisucursal
+    </span>
+
+  </div>
+
+  <div class="usuario">
+
+    <div class="usuario-info">
+
+      <strong>
+        <%= usuario.nombre %>
+      </strong>
+
+      <span>
+        Dueño · Todas las ubicaciones
+      </span>
+
+    </div>
+
+    <form
+      action="/logout"
+      method="POST"
+    >
+
+      <button
+        class="logout"
+        type="submit"
+      >
+        Salir
+      </button>
+
+    </form>
+
+  </div>
+
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <a href="/dashboard">
+      Inicio
+    </a>
+
+    <a href="/caja">
+      Caja
+    </a>
+
+    <a href="/ventas">
+      Ventas
+    </a>
+
+    <a href="/presupuestos">
+      Presupuestos
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/productos">
+      Productos
+    </a>
+
+    <a href="/stock">
+      Stock
+    </a>
+
+    <a href="/transferencias">
+      Transferencias
+    </a>
+
+    <a href="/ingresos">
+      Ingreso de mercadería
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/reportes">
+      Reportes
+    </a>
+
+    <a href="/movimientos">
+      Historial
+    </a>
+
+    <a
+      href="/tarjetas"
+      class="active"
+    >
+      Tarjetas y cuotas
+    </a>
+
+  </aside>
+
+  <main class="content">
+
+    <div class="page-header">
+
+      <h2>
+        Tarjetas y cuotas
+      </h2>
+
+      <p>
+        Configuración de financiación utilizada por Caja.
+      </p>
+
+    </div>
+
+    <% if (mensaje) { %>
+
+      <div class="alert alert-ok">
+        <%= mensaje %>
+      </div>
+
+    <% } %>
+
+    <% if (error) { %>
+
+      <div class="alert alert-error">
+        <%= error %>
+      </div>
+
+    <% } %>
+
+    <div class="grid">
+
+      <section class="card">
+
+        <h3>
+          Nueva tarjeta
+        </h3>
+
+        <form
+          action="/tarjetas"
+          method="POST"
+        >
+
+          <label>
+            Nombre
+          </label>
+
+          <input
+            type="text"
+            name="nombre"
+            placeholder="Ej: Naranja X"
+            required
+          >
+
+          <button
+            type="submit"
+            class="btn btn-primary full"
+          >
+            Guardar tarjeta
+          </button>
+
+        </form>
+
+        <div style="margin-top:25px;">
+
+          <% if (
+            tarjetas.length === 0
+          ) { %>
+
+            <div class="empty">
+              No hay tarjetas cargadas.
+            </div>
+
+          <% } else { %>
+
+            <% tarjetas.forEach(
+              tarjeta => {
+            %>
+
+              <div class="tarjeta-item">
+
+                <div class="tarjeta-header">
+
+                  <div>
+
+                    <strong>
+                      <%= tarjeta.nombre %>
+                    </strong>
+
+                    <div style="
+                      margin-top:5px;
+                      color:#9ca3af;
+                      font-size:11px;
+                    ">
+                      <%= Number(tarjeta.configuraciones) %>
+                      configuraciones activas
+                    </div>
+
+                  </div>
+
+                  <div>
+
+                    <% if (
+                      tarjeta.activo
+                    ) { %>
+
+                      <span class="badge badge-ok">
+                        Activa
+                      </span>
+
+                    <% } else { %>
+
+                      <span class="badge badge-off">
+                        Inactiva
+                      </span>
+
+                    <% } %>
+
+                  </div>
+
+                </div>
+
+                <form
+                  class="config-form"
+                  action="/tarjetas/<%= tarjeta.id %>/cuotas"
+                  method="POST"
+                >
+
+                  <div class="config-grid">
+
+                    <div>
+
+                      <label>
+                        Cuotas
+                      </label>
+
+                      <input
+                        type="number"
+                        name="cuotas"
+                        min="1"
+                        step="1"
+                        placeholder="Ej: 6"
+                        required
+                      >
+
+                    </div>
+
+                    <div>
+
+                      <label>
+                        Recargo %
+                      </label>
+
+                      <input
+                        type="number"
+                        name="recargo_porcentaje"
+                        min="0"
+                        step="0.01"
+                        placeholder="Ej: 20"
+                        required
+                      >
+
+                    </div>
+
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                    >
+                      Guardar
+                    </button>
+
+                  </div>
+
+                </form>
+
+                <form
+                  action="/tarjetas/<%= tarjeta.id %>/estado"
+                  method="POST"
+                  style="margin-top:9px;"
+                >
+
+                  <button
+                    type="submit"
+                    class="btn btn-light"
+                  >
+
+                    <% if (
+                      tarjeta.activo
+                    ) { %>
+
+                      Desactivar tarjeta
+
+                    <% } else { %>
+
+                      Activar tarjeta
+
+                    <% } %>
+
+                  </button>
+
+                </form>
+
+              </div>
+
+            <% }) %>
+
+          <% } %>
+
+        </div>
+
+      </section>
+
+      <section class="card">
+
+        <h3>
+          Configuraciones de cuotas
+        </h3>
+
+        <% if (
+          cuotas.length === 0
+        ) { %>
+
+          <div class="empty">
+            Todavía no hay cuotas configuradas.
+          </div>
+
+        <% } else { %>
+
+          <div class="table-card">
+
+            <table>
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Tarjeta
+                  </th>
+
+                  <th>
+                    Cuotas
+                  </th>
+
+                  <th>
+                    Recargo
+                  </th>
+
+                  <th>
+                    Estado
+                  </th>
+
+                  <th>
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                <% cuotas.forEach(
+                  cuota => {
+                %>
+
+                  <tr>
+
+                    <td>
+                      <strong>
+                        <%= cuota.tarjeta %>
+                      </strong>
+                    </td>
+
+                    <td>
+                      <%= cuota.cuotas %>
+                    </td>
+
+                    <td>
+                      <%= Number(
+                        cuota.recargo_porcentaje
+                      ) %>%
+                    </td>
+
+                    <td>
+
+                      <% if (
+                        cuota.activo
+                      ) { %>
+
+                        <span class="badge badge-ok">
+                          Activa
+                        </span>
+
+                      <% } else { %>
+
+                        <span class="badge badge-off">
+                          Inactiva
+                        </span>
+
+                      <% } %>
+
+                    </td>
+
+                    <td>
+
+                      <form
+                        action="/tarjetas/cuotas/<%= cuota.id %>/estado"
+                        method="POST"
+                      >
+
+                        <button
+                          type="submit"
+                          class="btn btn-light"
+                        >
+
+                          <% if (
+                            cuota.activo
+                          ) { %>
+
+                            Desactivar
+
+                          <% } else { %>
+
+                            Activar
+
+                          <% } %>
+
+                        </button>
+
+                      </form>
+
+                    </td>
+
+                  </tr>
+
+                <% }) %>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        <% } %>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+</body>
+</html>

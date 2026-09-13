@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Transferencias
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .topbar {
+      min-height: 72px;
+      background: #111827;
+      color: white;
+      padding: 0 26px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 3px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .usuario {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .usuario-info {
+      text-align: right;
+    }
+
+    .usuario-info strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .usuario-info span {
+      display: block;
+      margin-top: 3px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .logout {
+      border: 1px solid #374151;
+      border-radius: 9px;
+      padding: 9px 12px;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 72px);
+    }
+
+    .sidebar {
+      width: 235px;
+      flex-shrink: 0;
+      background: white;
+      border-right: 1px solid #e5e7eb;
+      padding: 20px 14px;
+    }
+
+    .sidebar a {
+      display: block;
+      margin-bottom: 5px;
+      padding: 12px 14px;
+      border-radius: 9px;
+      text-decoration: none;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar a:hover {
+      background: #f3f4f6;
+    }
+
+    .sidebar a.active {
+      background: #111827;
+      color: white;
+    }
+
+    .separator {
+      height: 1px;
+      margin: 14px 8px;
+      background: #e5e7eb;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 0;
+      padding: 28px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+      color: #6b7280;
+    }
+
+    .alert {
+      margin-top: 18px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .alert-ok {
+      background: #ecfdf3;
+      color: #067647;
+      border: 1px solid #abefc6;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .card {
+      margin-top: 20px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 15px;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      padding: 10px 12px;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 75px;
+      resize: vertical;
+    }
+
+    .buscar-box {
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .resultados {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 72px;
+      z-index: 50;
+
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 15px 35px rgba(0,0,0,.12);
+
+      display: none;
+    }
+
+    .resultado {
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f2f4;
+    }
+
+    .resultado:hover {
+      background: #f9fafb;
+    }
+
+    .resultado strong {
+      display: block;
+    }
+
+    .resultado span {
+      display: block;
+      margin-top: 4px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .table-card {
+      margin-top: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px 14px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      color: #6b7280;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f2f4;
+      font-size: 13px;
+    }
+
+    .cantidad-input {
+      width: 90px;
+    }
+
+    .btn {
+      min-height: 42px;
+      padding: 0 15px;
+      border: none;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .empty {
+      padding: 28px;
+      text-align: center;
+      color: #9ca3af;
+    }
+
+    .section-title {
+      margin-top: 28px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 760px) {
+
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        padding: 14px 18px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <h1>
+      LA TORRE
+    </h1>
+
+    <span>
+      Sistema Multisucursal
+    </span>
+
+  </div>
+
+  <div class="usuario">
+
+    <div class="usuario-info">
+
+      <strong>
+        <%= usuario.nombre %>
+      </strong>
+
+      <span>
+        Dueño · Todas las ubicaciones
+      </span>
+
+    </div>
+
+    <form
+      action="/logout"
+      method="POST"
+    >
+      <button
+        class="logout"
+        type="submit"
+      >
+        Salir
+      </button>
+    </form>
+
+  </div>
+
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <a href="/dashboard">
+      Inicio
+    </a>
+
+    <a href="/caja">
+      Caja
+    </a>
+
+    <a href="/ventas">
+      Ventas
+    </a>
+
+    <a href="/presupuestos">
+      Presupuestos
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/productos">
+      Productos
+    </a>
+
+    <a href="/stock">
+      Stock
+    </a>
+
+    <a
+      href="/transferencias"
+      class="active"
+    >
+      Transferencias
+    </a>
+
+    <a href="/ingresos">
+      Ingreso de mercadería
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/reportes">
+      Reportes
+    </a>
+
+    <a href="/movimientos">
+      Historial
+    </a>
+
+  </aside>
+
+  <main class="content">
+
+    <div class="page-header">
+
+      <h2>
+        Transferencias
+      </h2>
+
+      <p>
+        Movimientos entre Depósito, Florida y Delfín Gallo.
+      </p>
+
+    </div>
+
+    <% if (mensaje) { %>
+
+      <div class="alert alert-ok">
+        <%= mensaje %>
+      </div>
+
+    <% } %>
+
+    <% if (error) { %>
+
+      <div class="alert alert-error">
+        <%= error %>
+      </div>
+
+    <% } %>
+
+    <section class="card">
+
+      <form
+        id="formTransferencia"
+        method="POST"
+        action="/transferencias"
+      >
+
+        <div class="grid">
+
+          <div>
+
+            <label>
+              Origen
+            </label>
+
+            <select
+              id="origen"
+              name="origen_id"
+              required
+            >
+
+              <option value="">
+                Seleccionar...
+              </option>
+
+              <% ubicaciones.forEach(ubicacion => { %>
+
+                <option
+                  value="<%= ubicacion.id %>"
+                >
+                  <%= ubicacion.nombre %>
+                </option>
+
+              <% }) %>
+
+            </select>
+
+          </div>
+
+          <div>
+
+            <label>
+              Destino
+            </label>
+
+            <select
+              id="destino"
+              name="destino_id"
+              required
+            >
+
+              <option value="">
+                Seleccionar...
+              </option>
+
+              <% ubicaciones.forEach(ubicacion => { %>
+
+                <option
+                  value="<%= ubicacion.id %>"
+                >
+                  <%= ubicacion.nombre %>
+                </option>
+
+              <% }) %>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <div class="buscar-box">
+
+          <label>
+            Buscar o escanear producto
+          </label>
+
+          <input
+            type="text"
+            id="buscarProducto"
+            placeholder="Código, código de barras o descripción..."
+            autocomplete="off"
+          >
+
+          <div
+            class="resultados"
+            id="resultados"
+          >
+          </div>
+
+        </div>
+
+        <div class="table-card">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Producto
+                </th>
+
+                <th>
+                  Stock origen
+                </th>
+
+                <th>
+                  Cantidad
+                </th>
+
+                <th>
+                  Acción
+                </th>
+
+              </tr>
+
+            </thead>
+
+            <tbody
+              id="detalle"
+            >
+
+              <tr id="filaVacia">
+
+                <td
+                  colspan="4"
+                  class="empty"
+                >
+                  Todavía no agregaste productos.
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <div style="margin-top:20px;">
+
+          <label>
+            Observaciones
+          </label>
+
+          <textarea
+            name="observaciones"
+            placeholder="Opcional"
+          ></textarea>
+
+        </div>
+
+        <input
+          type="hidden"
+          name="items"
+          id="itemsJson"
+        >
+
+        <div class="actions">
+
+          <button
+            class="btn btn-primary"
+            type="submit"
+          >
+            Confirmar transferencia
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+    <div class="section-title">
+      Últimas transferencias
+    </div>
+
+    <section class="table-card">
+
+      <% if (
+        transferencias.length === 0
+      ) { %>
+
+        <div class="empty">
+          Todavía no hay transferencias registradas.
+        </div>
+
+      <% } else { %>
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                N°
+              </th>
+
+              <th>
+                Fecha
+              </th>
+
+              <th>
+                Origen
+              </th>
+
+              <th>
+                Destino
+              </th>
+
+              <th>
+                Unidades
+              </th>
+
+              <th>
+                Usuario
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <% transferencias.forEach(t => { %>
+
+              <tr>
+
+                <td>
+                  #<%= t.numero %>
+                </td>
+
+                <td>
+                  <%= new Date(
+                    t.created_at
+                  ).toLocaleString("es-AR") %>
+                </td>
+
+                <td>
+                  <strong>
+                    <%= t.origen %>
+                  </strong>
+                </td>
+
+                <td>
+                  <strong>
+                    <%= t.destino %>
+                  </strong>
+                </td>
+
+                <td>
+                  <%= Number(t.unidades) %>
+                </td>
+
+                <td>
+                  <%= t.usuario %>
+                </td>
+
+              </tr>
+
+            <% }) %>
+
+          </tbody>
+
+        </table>
+
+      <% } %>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+
+  let carrito = [];
+
+  const origen =
+    document.getElementById(
+      "origen"
+    );
+
+  const destino =
+    document.getElementById(
+      "destino"
+    );
+
+  const buscar =
+    document.getElementById(
+      "buscarProducto"
+    );
+
+  const resultados =
+    document.getElementById(
+      "resultados"
+    );
+
+  const detalle =
+    document.getElementById(
+      "detalle"
+    );
+
+  const itemsJson =
+    document.getElementById(
+      "itemsJson"
+    );
+
+  let timer = null;
+
+  // =====================================================
+  // VALIDAR ORIGEN / DESTINO
+  // =====================================================
+
+  origen.addEventListener(
+    "change",
+    () => {
+
+      carrito = [];
+      renderCarrito();
+
+      buscar.value = "";
+      resultados.style.display =
+        "none";
+
+    }
+  );
+
+  destino.addEventListener(
+    "change",
+    () => {
+
+      if (
+        origen.value &&
+        destino.value &&
+        origen.value ===
+          destino.value
+      ) {
+        alert(
+          "El origen y destino no pueden ser iguales."
+        );
+
+        destino.value = "";
+      }
+
+    }
+  );
+
+  // =====================================================
+  // BUSCAR
+  // =====================================================
+
+  buscar.addEventListener(
+    "input",
+    () => {
+
+      clearTimeout(timer);
+
+      timer =
+        setTimeout(
+          buscarProductos,
+          250
+        );
+
+    }
+  );
+
+  buscar.addEventListener(
+    "keydown",
+    (event) => {
+
+      if (
+        event.key === "Enter"
+      ) {
+        event.preventDefault();
+
+        buscarProductos(
+          true
+        );
+      }
+
+    }
+  );
+
+  async function buscarProductos(
+    agregarAutomatico = false
+  ) {
+
+    const texto =
+      buscar.value.trim();
+
+    if (
+      !origen.value
+    ) {
+      resultados.innerHTML =
+        `
+          <div class="resultado">
+            Primero seleccioná el origen.
+          </div>
+        `;
+
+      resultados.style.display =
+        "block";
+
+      return;
+    }
+
+    if (
+      !texto
+    ) {
+      resultados.style.display =
+        "none";
+
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(
+          `/transferencias/api/productos?buscar=${encodeURIComponent(texto)}&ubicacion_id=${origen.value}`
+        );
+
+      const productos =
+        await response.json();
+
+      if (
+        productos.length === 0
+      ) {
+
+        resultados.innerHTML =
+          `
+            <div class="resultado">
+              Producto no encontrado.
+            </div>
+          `;
+
+        resultados.style.display =
+          "block";
+
+        return;
+      }
+
+      if (
+        agregarAutomatico &&
+        productos.length === 1
+      ) {
+
+        agregarProducto(
+          productos[0]
+        );
+
+        return;
+      }
+
+      resultados.innerHTML =
+        "";
+
+      productos.forEach(
+        producto => {
+
+          const div =
+            document.createElement(
+              "div"
+            );
+
+          div.className =
+            "resultado";
+
+          div.innerHTML =
+            `
+              <strong>
+                ${producto.descripcion}
+              </strong>
+
+              <span>
+                ${producto.codigo_interno || "-"}
+                · Stock:
+                ${producto.stock}
+              </span>
+            `;
+
+          div.addEventListener(
+            "click",
+            () => {
+
+              agregarProducto(
+                producto
+              );
+
+            }
+          );
+
+          resultados.appendChild(
+            div
+          );
+
+        }
+      );
+
+      resultados.style.display =
+        "block";
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+  // =====================================================
+  // AGREGAR
+  // =====================================================
+
+  function agregarProducto(
+    producto
+  ) {
+
+    const existente =
+      carrito.find(
+        item =>
+          item.producto_id ===
+          producto.id
+      );
+
+    if (existente) {
+
+      if (
+        existente.cantidad <
+        producto.stock
+      ) {
+        existente.cantidad += 1;
+      }
+
+    } else {
+
+      carrito.push({
+        producto_id:
+          producto.id,
+
+        descripcion:
+          producto.descripcion,
+
+        stock:
+          Number(
+            producto.stock
+          ),
+
+        cantidad: 1,
+      });
+
+    }
+
+    buscar.value = "";
+
+    resultados.style.display =
+      "none";
+
+    renderCarrito();
+
+    buscar.focus();
+
+  }
+
+  // =====================================================
+  // RENDER
+  // =====================================================
+
+  function renderCarrito() {
+
+    detalle.innerHTML = "";
+
+    if (
+      carrito.length === 0
+    ) {
+
+      detalle.innerHTML =
+        `
+          <tr>
+            <td
+              colspan="4"
+              class="empty"
+            >
+              Todavía no agregaste productos.
+            </td>
+          </tr>
+        `;
+
+      itemsJson.value =
+        "[]";
+
+      return;
+
+    }
+
+    carrito.forEach(
+      (
+        item,
+        index
+      ) => {
+
+        const tr =
+          document.createElement(
+            "tr"
+          );
+
+        tr.innerHTML =
+          `
+            <td>
+              <strong>
+                ${item.descripcion}
+              </strong>
+            </td>
+
+            <td>
+              ${item.stock}
+            </td>
+
+            <td>
+
+              <input
+                class="cantidad-input"
+                type="number"
+                value="${item.cantidad}"
+                min="0.001"
+                max="${item.stock}"
+                step="0.001"
+                data-index="${index}"
+              >
+
+            </td>
+
+            <td>
+
+              <button
+                class="btn btn-danger"
+                type="button"
+                data-remove="${index}"
+              >
+                Quitar
+              </button>
+
+            </td>
+          `;
+
+        detalle.appendChild(
+          tr
+        );
+
+      }
+    );
+
+    detalle
+      .querySelectorAll(
+        ".cantidad-input"
+      )
+      .forEach(
+        input => {
+
+          input.addEventListener(
+            "change",
+            () => {
+
+              const index =
+                Number(
+                  input.dataset.index
+                );
+
+              let cantidad =
+                Number(
+                  input.value
+                );
+
+              if (
+                cantidad <= 0
+              ) {
+                cantidad = 1;
+              }
+
+              if (
+                cantidad >
+                carrito[index]
+                  .stock
+              ) {
+                cantidad =
+                  carrito[index]
+                    .stock;
+              }
+
+              carrito[index]
+                .cantidad =
+                cantidad;
+
+              renderCarrito();
+
+            }
+          );
+
+        }
+      );
+
+    detalle
+      .querySelectorAll(
+        "[data-remove]"
+      )
+      .forEach(
+        boton => {
+
+          boton.addEventListener(
+            "click",
+            () => {
+
+              carrito.splice(
+                Number(
+                  boton.dataset.remove
+                ),
+                1
+              );
+
+              renderCarrito();
+
+            }
+          );
+
+        }
+      );
+
+    itemsJson.value =
+      JSON.stringify(
+        carrito.map(
+          item => ({
+            producto_id:
+              item.producto_id,
+
+            cantidad:
+              item.cantidad,
+          })
+        )
+      );
+
+  }
+
+  // =====================================================
+  // CONFIRMAR
+  // =====================================================
+
+  document
+    .getElementById(
+      "formTransferencia"
+    )
+    .addEventListener(
+      "submit",
+      event => {
+
+        if (
+          !origen.value ||
+          !destino.value
+        ) {
+          event.preventDefault();
+
+          alert(
+            "Seleccioná origen y destino."
+          );
+
+          return;
+        }
+
+        if (
+          origen.value ===
+          destino.value
+        ) {
+          event.preventDefault();
+
+          alert(
+            "El origen y destino no pueden ser iguales."
+          );
+
+          return;
+        }
+
+        if (
+          carrito.length === 0
+        ) {
+          event.preventDefault();
+
+          alert(
+            "Agregá al menos un producto."
+          );
+
+          return;
+        }
+
+        itemsJson.value =
+          JSON.stringify(
+            carrito.map(
+              item => ({
+                producto_id:
+                  item.producto_id,
+
+                cantidad:
+                  item.cantidad,
+              })
+            )
+          );
+
+      }
+    );
+
+</script>
+
+</body>
+</html>

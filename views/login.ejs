@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Iniciar sesión
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      background:
+        linear-gradient(
+          135deg,
+          #111827,
+          #1f2937
+        );
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+    }
+
+    .login {
+      width: 100%;
+      max-width: 420px;
+
+      background: white;
+
+      border-radius: 22px;
+
+      padding: 42px;
+
+      box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.30);
+    }
+
+    .marca {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .marca h1 {
+      margin: 0;
+
+      font-size: 38px;
+      font-weight: 800;
+
+      letter-spacing: 1px;
+
+      color: #111827;
+    }
+
+    .marca h2 {
+      margin: 7px 0 0;
+
+      font-size: 18px;
+      font-weight: 600;
+
+      color: #4b5563;
+    }
+
+    .marca p {
+      margin: 10px 0 0;
+
+      color: #9ca3af;
+
+      font-size: 13px;
+    }
+
+    .campo {
+      margin-bottom: 19px;
+    }
+
+    .campo label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      color: #374151;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .campo input {
+      width: 100%;
+
+      padding: 14px 15px;
+
+      border:
+        1px solid #d1d5db;
+
+      border-radius: 11px;
+
+      font-size: 16px;
+
+      outline: none;
+    }
+
+    .campo input:focus {
+      border-color: #111827;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(17, 24, 39, 0.08);
+    }
+
+    .error {
+      margin-bottom: 20px;
+
+      padding: 12px 14px;
+
+      border-radius: 10px;
+
+      background: #fef2f2;
+
+      color: #b91c1c;
+
+      font-size: 14px;
+
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+
+      border: none;
+
+      padding: 15px;
+
+      border-radius: 11px;
+
+      background: #111827;
+
+      color: white;
+
+      font-size: 16px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #1f2937;
+    }
+
+    .pie {
+      margin-top: 25px;
+
+      text-align: center;
+
+      color: #9ca3af;
+
+      font-size: 12px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <main class="login">
+
+    <div class="marca">
+
+      <h1>
+        LA TORRE
+      </h1>
+
+      <h2>
+        Sistema Multisucursal
+      </h2>
+
+      <p>
+        Florida · Delfín Gallo · Depósito
+      </p>
+
+    </div>
+
+    <% if (error) { %>
+
+      <div class="error">
+        <%= error %>
+      </div>
+
+    <% } %>
+
+    <form
+      action="/login"
+      method="POST"
+    >
+
+      <div class="campo">
+
+        <label for="username">
+          Usuario
+        </label>
+
+        <input
+          id="username"
+          name="username"
+          type="text"
+          autocomplete="username"
+          autofocus
+          required
+        >
+
+      </div>
+
+      <div class="campo">
+
+        <label for="password">
+          Contraseña
+        </label>
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+
+      </div>
+
+      <button type="submit">
+        Ingresar al sistema
+      </button>
+
+    </form>
+
+    <div class="pie">
+      Sistema de Gestión La Torre
+    </div>
+
+  </main>
+
+</body>
+
+</html>

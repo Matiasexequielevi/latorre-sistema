@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    La Torre | Ventas
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+
+      background: #f3f4f6;
+      color: #111827;
+
+      font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+    }
+
+    .topbar {
+      min-height: 72px;
+
+      background: #111827;
+      color: white;
+
+      padding: 0 26px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .brand span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #9ca3af;
+
+      font-size: 12px;
+    }
+
+    .usuario {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .usuario-info {
+      text-align: right;
+    }
+
+    .usuario-info strong {
+      display: block;
+
+      font-size: 14px;
+    }
+
+    .usuario-info span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #9ca3af;
+
+      font-size: 12px;
+    }
+
+    .logout {
+      border:
+        1px solid #374151;
+
+      border-radius: 9px;
+
+      padding: 9px 12px;
+
+      background: #1f2937;
+
+      color: white;
+
+      cursor: pointer;
+    }
+
+    .layout {
+      display: flex;
+
+      min-height:
+        calc(100vh - 72px);
+    }
+
+    .sidebar {
+      width: 235px;
+
+      flex-shrink: 0;
+
+      background: white;
+
+      border-right:
+        1px solid #e5e7eb;
+
+      padding: 20px 14px;
+    }
+
+    .sidebar a {
+      display: block;
+
+      margin-bottom: 5px;
+
+      padding: 12px 14px;
+
+      border-radius: 9px;
+
+      text-decoration: none;
+
+      color: #374151;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar a:hover {
+      background: #f3f4f6;
+    }
+
+    .sidebar a.active {
+      background: #111827;
+      color: white;
+    }
+
+    .separator {
+      height: 1px;
+
+      margin: 14px 8px;
+
+      background: #e5e7eb;
+    }
+
+    .content {
+      flex: 1;
+
+      min-width: 0;
+
+      padding: 28px;
+    }
+
+    .page-header {
+      margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+
+      font-size: 28px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+
+      color: #6b7280;
+    }
+
+    .alert {
+      margin-bottom: 18px;
+
+      padding: 13px 16px;
+
+      border-radius: 10px;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .alert-ok {
+      background: #ecfdf3;
+      color: #067647;
+
+      border:
+        1px solid #abefc6;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #b91c1c;
+
+      border:
+        1px solid #fecaca;
+    }
+
+    .cards {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(0, 1fr)
+        );
+
+      gap: 15px;
+
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 14px;
+
+      padding: 18px;
+    }
+
+    .card .label {
+      color: #6b7280;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card .value {
+      margin-top: 8px;
+
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .filters {
+      display: grid;
+
+      grid-template-columns:
+        1.4fr
+        repeat(
+          4,
+          minmax(140px, .6fr)
+        )
+        auto;
+
+      gap: 10px;
+
+      margin-bottom: 18px;
+
+      padding: 15px;
+
+      background: white;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 14px;
+    }
+
+    input,
+    select {
+      min-height: 42px;
+
+      width: 100%;
+
+      border:
+        1px solid #d1d5db;
+
+      border-radius: 9px;
+
+      padding: 8px 11px;
+
+      background: white;
+
+      font-size: 13px;
+    }
+
+    .btn {
+      min-height: 42px;
+
+      padding: 0 14px;
+
+      border: none;
+
+      border-radius: 9px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-light {
+      background: white;
+      color: #374151;
+
+      border:
+        1px solid #d1d5db;
+    }
+
+    .table-card {
+      background: white;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 14px;
+
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+
+      min-width: 1050px;
+
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px;
+
+      background: #f9fafb;
+
+      color: #6b7280;
+
+      border-bottom:
+        1px solid #e5e7eb;
+
+      text-align: left;
+
+      font-size: 11px;
+
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 12px;
+
+      border-bottom:
+        1px solid #f0f1f3;
+
+      font-size: 13px;
+
+      vertical-align: middle;
+    }
+
+    .venta-numero {
+      font-weight: 800;
+    }
+
+    .precio {
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-block;
+
+      padding: 5px 8px;
+
+      border-radius: 7px;
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .badge-ok {
+      background: #ecfdf3;
+      color: #067647;
+    }
+
+    .badge-anulada {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .empty {
+      padding: 45px;
+
+      text-align: center;
+
+      color: #9ca3af;
+    }
+
+    @media (
+      max-width: 1100px
+    ) {
+
+      .filters {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+    }
+
+    @media (
+      max-width: 760px
+    ) {
+
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .topbar {
+        padding: 14px 18px;
+      }
+
+      .cards,
+      .filters {
+        grid-template-columns:
+          1fr;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <h1>
+      LA TORRE
+    </h1>
+
+    <span>
+      Sistema Multisucursal
+    </span>
+
+  </div>
+
+  <div class="usuario">
+
+    <div class="usuario-info">
+
+      <strong>
+        <%= usuario.nombre %>
+      </strong>
+
+      <span>
+
+        <% if (
+          usuario.rol === "dueno"
+        ) { %>
+
+          Dueño · Todas las ubicaciones
+
+        <% } else { %>
+
+          <%= usuario.ubicacion %>
+
+        <% } %>
+
+      </span>
+
+    </div>
+
+    <form
+      action="/logout"
+      method="POST"
+    >
+
+      <button
+        class="logout"
+        type="submit"
+      >
+        Salir
+      </button>
+
+    </form>
+
+  </div>
+
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <a href="/dashboard">
+      Inicio
+    </a>
+
+    <a href="/caja">
+      Caja
+    </a>
+
+    <a
+      href="/ventas"
+      class="active"
+    >
+      Ventas
+    </a>
+
+    <a href="/presupuestos">
+      Presupuestos
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/productos">
+      Productos
+    </a>
+
+    <a href="/stock">
+      Stock
+    </a>
+
+    <a href="/transferencias">
+      Transferencias
+    </a>
+
+    <a href="/ingresos">
+      Ingreso de mercadería
+    </a>
+
+    <div class="separator"></div>
+
+    <a href="/reportes">
+      Reportes
+    </a>
+
+    <a href="/movimientos">
+      Historial
+    </a>
+
+  </aside>
+
+  <main class="content">
+
+    <div class="page-header">
+
+      <h2>
+        Ventas
+      </h2>
+
+      <p>
+        Consulta y control de operaciones realizadas.
+      </p>
+
+    </div>
+
+    <% if (mensaje) { %>
+
+      <div class="alert alert-ok">
+        <%= mensaje %>
+      </div>
+
+    <% } %>
+
+    <% if (error) { %>
+
+      <div class="alert alert-error">
+        <%= error %>
+      </div>
+
+    <% } %>
+
+    <section class="cards">
+
+      <div class="card">
+
+        <div class="label">
+          TOTAL CONFIRMADO
+        </div>
+
+        <div class="value">
+
+          $<%= Number(
+            resumen.totalConfirmadas
+          ).toLocaleString(
+            "es-AR",
+            {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+          ) %>
+
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <div class="label">
+          VENTAS CONFIRMADAS
+        </div>
+
+        <div class="value">
+          <%= resumen.cantidadConfirmadas %>
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <div class="label">
+          VENTAS ANULADAS
+        </div>
+
+        <div class="value">
+          <%= resumen.cantidadAnuladas %>
+        </div>
+
+      </div>
+
+    </section>
+
+    <form
+      method="GET"
+      action="/ventas"
+      class="filters"
+    >
+
+      <input
+        type="search"
+        name="buscar"
+        value="<%= filtros.buscar %>"
+        placeholder="Venta, cliente, DNI, teléfono, vendedor..."
+      >
+
+      <input
+        type="date"
+        name="desde"
+        value="<%= filtros.desde %>"
+        title="Desde"
+      >
+
+      <input
+        type="date"
+        name="hasta"
+        value="<%= filtros.hasta %>"
+        title="Hasta"
+      >
+
+      <% if (
+        usuario.rol === "dueno"
+      ) { %>
+
+        <select
+          name="sucursal_id"
+        >
+
+          <option value="">
+            Todas las sucursales
+          </option>
+
+          <% sucursales.forEach(
+            sucursal => {
+          %>
+
+            <option
+              value="<%= sucursal.id %>"
+              <%= Number(filtros.sucursalId) === Number(sucursal.id) ? "selected" : "" %>
+            >
+              <%= sucursal.nombre %>
+            </option>
+
+          <% }) %>
+
+        </select>
+
+      <% } %>
+
+      <select name="estado">
+
+        <option value="">
+          Todos los estados
+        </option>
+
+        <option
+          value="confirmada"
+          <%= filtros.estado === "confirmada" ? "selected" : "" %>
+        >
+          Confirmadas
+        </option>
+
+        <option
+          value="anulada"
+          <%= filtros.estado === "anulada" ? "selected" : "" %>
+        >
+          Anuladas
+        </option>
+
+      </select>
+
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        Filtrar
+      </button>
+
+    </form>
+
+    <section class="table-card">
+
+      <% if (
+        ventas.length === 0
+      ) { %>
+
+        <div class="empty">
+          No hay ventas para mostrar.
+        </div>
+
+      <% } else { %>
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Venta
+              </th>
+
+              <th>
+                Fecha
+              </th>
+
+              <th>
+                Sucursal
+              </th>
+
+              <th>
+                Cliente
+              </th>
+
+              <th>
+                Vendedor
+              </th>
+
+              <th>
+                Pago
+              </th>
+
+              <th>
+                Total
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th>
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <% ventas.forEach(
+              venta => {
+            %>
+
+              <tr>
+
+                <td>
+                  <span class="venta-numero">
+                    #<%= venta.numero %>
+                  </span>
+                </td>
+
+                <td>
+
+                  <%= new Date(
+                    venta.created_at
+                  ).toLocaleString(
+                    "es-AR"
+                  ) %>
+
+                </td>
+
+                <td>
+                  <%= venta.ubicacion %>
+                </td>
+
+                <td>
+                  <%= venta.cliente_nombre || "Consumidor final" %>
+                </td>
+
+                <td>
+                  <%= venta.vendedor %>
+                </td>
+
+                <td>
+
+                  <%= venta.forma_pago || "-" %>
+
+                  <% if (
+                    venta.tarjeta
+                  ) { %>
+
+                    <div style="
+                      margin-top:3px;
+                      color:#9ca3af;
+                      font-size:11px;
+                    ">
+
+                      <%= venta.tarjeta %>
+
+                      <% if (
+                        venta.cuotas
+                      ) { %>
+
+                        · <%= venta.cuotas %> cuotas
+
+                      <% } %>
+
+                    </div>
+
+                  <% } %>
+
+                </td>
+
+                <td class="precio">
+
+                  $<%= Number(
+                    venta.total
+                  ).toLocaleString(
+                    "es-AR",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }
+                  ) %>
+
+                </td>
+
+                <td>
+
+                  <% if (
+                    venta.estado === "confirmada"
+                  ) { %>
+
+                    <span class="badge badge-ok">
+                      Confirmada
+                    </span>
+
+                  <% } else { %>
+
+                    <span class="badge badge-anulada">
+                      Anulada
+                    </span>
+
+                  <% } %>
+
+                </td>
+
+                <td>
+
+                  <a
+                    class="btn btn-light"
+                    href="/ventas/<%= venta.id %>"
+                  >
+                    Ver
+                  </a>
+
+                </td>
+
+              </tr>
+
+            <% }) %>
+
+          </tbody>
+
+        </table>
+
+      <% } %>
+
+    </section>
+
+  </main>
+
+</div>
+
+</body>
+</html>
