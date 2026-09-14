@@ -38,3 +38,4 @@ PRIMER INICIO
 
 IMPORTANTE
 No borrar la base actual. La migración está diseñada para conservar productos, ventas y stock existentes.
+Deploy Railway
