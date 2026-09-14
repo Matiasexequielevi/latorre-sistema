@@ -1035,7 +1035,7 @@ router.post(
               estado
             )
 
-            VALUES (
+                        VALUES (
               $1,
               $2,
               $3,
@@ -1055,6 +1055,7 @@ router.post(
               $13,
               $14,
               $15,
+              $16,
 
               'confirmada'
             )
