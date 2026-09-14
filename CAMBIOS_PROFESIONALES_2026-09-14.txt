@@ -1,0 +1,39 @@
+LA TORRE - BLOQUE PROFESIONAL
+
+1) Apertura y cierre de caja
+- Nueva pantalla /cajas.
+- Empleados deben abrir caja antes de vender.
+- Fondo inicial, ventas por medio de pago, efectivo esperado, contado y diferencia.
+- Historial de cajas para el dueño.
+- Cada venta queda asociada a la caja abierta.
+
+2) Presupuestos
+- Comprobante A4 profesional con logo, dirección de sucursal, teléfono e Instagram.
+- PDF real generado desde el servidor.
+- Botón WhatsApp con enlace al PDF.
+- Reimpresión desde el detalle del presupuesto.
+
+3) Ventas
+- Al confirmar una venta se abre el detalle con opciones de comprobante.
+- Ticket térmico 80 mm.
+- Comprobante A4.
+- PDF real y botón WhatsApp.
+- Reimpresión desde historial de ventas.
+
+4) Stock rápido
+- El dueño puede escribir la cantidad directamente en Stock y presionar ENTER.
+- Guarda el nuevo stock y registra movimiento de auditoría automáticamente.
+- Se mantiene también el botón Ajustar tradicional.
+
+5) Identidad comercial
+Teléfono: 3813450529
+Florida: Av. Torquinst 326 - Ing. La Florida
+Delfín Gallo: Santiago Gallo s/n - Delfin Gallo (Caps)
+Instagram: @latorre.electro_
+Logo incluido en public/images/logo-la-torre.png
+
+IMPORTANTE AL ACTUALIZAR
+- Ejecutar npm install (se agregó pdfkit).
+- Hacer backup de la base antes del primer deploy.
+- database/init.js migra la base automáticamente al iniciar.
+- En Render mantener DATABASE_URL, NODE_ENV=production y SESSION_SECRET.

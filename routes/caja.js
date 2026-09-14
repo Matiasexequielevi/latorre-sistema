@@ -85,6 +85,14 @@ router.get(
           ORDER BY nombre;
         `);
 
+      const cajaResultado = await db.pool.query(`
+        SELECT c.id, c.apertura_at, c.monto_inicial, ub.nombre AS ubicacion
+        FROM cajas c JOIN ubicaciones ub ON ub.id=c.ubicacion_id
+        WHERE c.usuario_id=$1 AND c.estado='abierta'
+        ORDER BY c.apertura_at DESC LIMIT 1
+      `,[usuario.id]);
+      const cajaAbierta = cajaResultado.rows[0] || null;
+
       res.render(
         "caja",
         {
@@ -97,6 +105,8 @@ router.get(
 
           tarjetas:
             tarjetas.rows,
+
+          cajaAbierta,
 
           mensaje:
             req.query.ok || null,
@@ -505,6 +515,17 @@ router.post(
         throw new Error(
           "La sucursal seleccionada no es válida."
         );
+      }
+
+      // =====================================================
+      // CAJA ABIERTA (empleados)
+      // =====================================================
+      let cajaId = null;
+      if (usuario.rol === "empleado") {
+        const caja = await client.query(`SELECT id, ubicacion_id FROM cajas WHERE usuario_id=$1 AND estado='abierta' ORDER BY apertura_at DESC LIMIT 1`,[usuario.id]);
+        if (!caja.rows.length) throw new Error("Debés abrir caja antes de registrar ventas.");
+        if (Number(caja.rows[0].ubicacion_id) !== Number(ubicacionId)) throw new Error("La caja abierta no corresponde a tu local.");
+        cajaId = Number(caja.rows[0].id);
       }
 
       // =====================================================
@@ -1009,6 +1030,7 @@ router.post(
               tarjeta_id,
               cuotas,
               porcentaje_recargo,
+              caja_id,
 
               estado
             )
@@ -1060,6 +1082,7 @@ router.post(
             tarjetaId,
             cuotas,
             porcentajeRecargo,
+            cajaId,
           ]
         );
 
@@ -1206,15 +1229,9 @@ router.post(
         false;
 
       return res.redirect(
-        "/caja?ok=" +
+        `/ventas/${ventaId}?ok=` +
         encodeURIComponent(
-          `Venta #${numero} registrada correctamente por $${total.toLocaleString(
-            "es-AR",
-            {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }
-          )}`
+          `Venta #${numero} registrada correctamente por $${total.toLocaleString("es-AR", {minimumFractionDigits:2, maximumFractionDigits:2})}. Ya podés imprimir ticket, A4 o compartir el PDF.`
         )
       );
     } catch (error) {

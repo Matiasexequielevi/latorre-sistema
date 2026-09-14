@@ -768,7 +768,12 @@
 
     </div>
 
-    <% if (mensaje) { %>
+    <div style="margin-bottom:16px;padding:14px 16px;background:<%= cajaAbierta ? '#ecfdf3' : '#fff7ed' %>;border:1px solid <%= cajaAbierta ? '#abefc6' : '#fed7aa' %>;border-radius:12px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+  <div><strong><%= cajaAbierta ? 'Caja abierta' : 'Caja cerrada' %></strong><div style="font-size:12px;color:#6b7280;margin-top:4px;"><%= cajaAbierta ? ('Desde '+new Date(cajaAbierta.apertura_at).toLocaleString('es-AR')) : (usuario.rol==='empleado' ? 'Abrí caja antes de comenzar a vender.' : 'El dueño puede operar sin apertura obligatoria.') %></div></div>
+  <a href="/cajas" style="background:#111827;color:white;text-decoration:none;padding:10px 14px;border-radius:9px;font-weight:700;">Control de caja</a>
+</div>
+
+<% if (mensaje) { %>
 
       <div class="alert alert-ok">
         <%= mensaje %>

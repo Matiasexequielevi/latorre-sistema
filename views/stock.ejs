@@ -592,6 +592,7 @@
 
     }
 
+  .stock-inline{width:90px;padding:7px 9px;border:1px solid #d1d5db;border-radius:8px;font-weight:800;text-align:center}.stock-inline.saving{opacity:.55}.stock-inline.saved{border-color:#22c55e;background:#f0fdf4}.stock-inline.error{border-color:#ef4444;background:#fef2f2}
   </style>
 
 </head>
@@ -667,6 +668,8 @@
     <a href="/caja">
       Caja
     </a>
+
+      <a href="/cajas">Cajas / Arqueo</a>
 
     <a href="/ventas">
       Ventas
@@ -984,23 +987,13 @@
                     </td>
 
                     <td class="cantidad">
-
-                      <% if (
-                        ubicacion.stock_bajo
-                      ) { %>
-
-                        <span class="stock-bajo">
-                          <%= ubicacion.cantidad %>
-                        </span>
-
+                      <% if (usuario.rol === "dueno") { %>
+                        <input class="stock-inline" type="number" min="0" step="0.001" value="<%= ubicacion.cantidad %>" data-producto-id="<%= producto.producto_id %>" data-ubicacion-id="<%= ubicacion.ubicacion_id %>" title="Escribí la cantidad y presioná Enter">
+                      <% } else if (ubicacion.stock_bajo) { %>
+                        <span class="stock-bajo"><%= ubicacion.cantidad %></span>
                       <% } else { %>
-
-                        <span class="stock-ok">
-                          <%= ubicacion.cantidad %>
-                        </span>
-
+                        <span class="stock-ok"><%= ubicacion.cantidad %></span>
                       <% } %>
-
                     </td>
 
                     <td>
@@ -1280,6 +1273,9 @@
 
 <% } %>
 
+<script>
+document.querySelectorAll('.stock-inline').forEach(input=>{input.addEventListener('keydown',async e=>{if(e.key!=='Enter')return;e.preventDefault();const cantidad=Number(input.value);if(!Number.isFinite(cantidad)||cantidad<0){input.classList.add('error');return;}input.classList.remove('saved','error');input.classList.add('saving');try{const r=await fetch('/stock/ajuste-rapido',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({producto_id:input.dataset.productoId,ubicacion_id:input.dataset.ubicacionId,cantidad})});const j=await r.json();if(!r.ok)throw new Error(j.error||'No se pudo actualizar');input.classList.remove('saving');input.classList.add('saved');setTimeout(()=>input.classList.remove('saved'),1200);}catch(err){input.classList.remove('saving');input.classList.add('error');alert(err.message);}});});
+</script>
 </body>
 
 </html>

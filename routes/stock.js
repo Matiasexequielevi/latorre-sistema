@@ -819,4 +819,20 @@ router.post(
   }
 );
 
+// AJUSTE RÁPIDO: escribir cantidad y ENTER
+router.post('/stock/ajuste-rapido', requiereLogin, soloDueno, async (req,res)=>{
+  const client=await db.pool.connect();
+  try{
+    const productoId=Number(req.body.producto_id), ubicacionId=Number(req.body.ubicacion_id), nueva=Number(req.body.cantidad);
+    if(!productoId||!ubicacionId||!Number.isFinite(nueva)||nueva<0) return res.status(400).json({error:'Cantidad inválida.'});
+    await client.query('BEGIN');
+    await client.query(`INSERT INTO stock(producto_id,ubicacion_id,cantidad) VALUES($1,$2,0) ON CONFLICT(producto_id,ubicacion_id) DO NOTHING`,[productoId,ubicacionId]);
+    const q=await client.query(`SELECT cantidad FROM stock WHERE producto_id=$1 AND ubicacion_id=$2 FOR UPDATE`,[productoId,ubicacionId]);
+    const anterior=Number(q.rows[0].cantidad||0), dif=nueva-anterior;
+    await client.query(`UPDATE stock SET cantidad=$3,updated_at=NOW() WHERE producto_id=$1 AND ubicacion_id=$2`,[productoId,ubicacionId,nueva]);
+    if(dif!==0) await client.query(`INSERT INTO movimientos_stock(producto_id,ubicacion_id,tipo,cantidad,stock_anterior,stock_nuevo,referencia_tipo,observaciones,usuario_id) VALUES($1,$2,$3,$4,$5,$6,'ajuste_rapido','Ajuste rápido desde pantalla Stock',$7)`,[productoId,ubicacionId,dif>0?'ajuste_positivo':'ajuste_negativo',dif,anterior,nueva,req.session.usuario.id]);
+    await client.query('COMMIT'); return res.json({ok:true,cantidad:nueva});
+  }catch(e){try{await client.query('ROLLBACK')}catch{} console.error(e);return res.status(500).json({error:'No se pudo actualizar el stock.'});}finally{client.release();}
+});
+
 module.exports = router;

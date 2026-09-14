@@ -233,6 +233,28 @@ async function inicializarBase() {
       );
     `);
 
+
+    // =========================================================
+    // 10B. CAJAS
+    // =========================================================
+    await db.pool.query(`
+      CREATE TABLE IF NOT EXISTS cajas (
+        id BIGSERIAL PRIMARY KEY,
+        ubicacion_id INTEGER NOT NULL REFERENCES ubicaciones(id),
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
+        apertura_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        cierre_at TIMESTAMP,
+        monto_inicial NUMERIC(14,2) NOT NULL DEFAULT 0,
+        efectivo_esperado NUMERIC(14,2),
+        efectivo_contado NUMERIC(14,2),
+        diferencia NUMERIC(14,2),
+        estado VARCHAR(20) NOT NULL DEFAULT 'abierta' CHECK (estado IN ('abierta','cerrada')),
+        observaciones_apertura TEXT,
+        observaciones_cierre TEXT
+      );
+    `);
+    await db.pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_caja_abierta_usuario ON cajas(usuario_id) WHERE estado='abierta';`);
+
     // =========================================================
     // 11. VENTAS
     // =========================================================
@@ -435,6 +457,7 @@ async function inicializarBase() {
     await db.pool.query(`ALTER TABLE ubicaciones ADD COLUMN IF NOT EXISTS sucursal VARCHAR(30);`);
     await db.pool.query(`ALTER TABLE productos ADD COLUMN IF NOT EXISTS proveedor_id INTEGER REFERENCES proveedores(id);`);
     await db.pool.query(`ALTER TABLE ventas ADD COLUMN IF NOT EXISTS flete NUMERIC(14,2) NOT NULL DEFAULT 0;`);
+    await db.pool.query(`ALTER TABLE ventas ADD COLUMN IF NOT EXISTS caja_id BIGINT REFERENCES cajas(id);`);
     await db.pool.query(`ALTER TABLE venta_items ADD COLUMN IF NOT EXISTS precio_lista NUMERIC(14,2);`);
 
     // Conserva IDs y stock existentes: sólo cambia el nombre de las ubicaciones.

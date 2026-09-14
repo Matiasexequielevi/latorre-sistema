@@ -70,6 +70,9 @@ const importacionRoutes =
 const usuariosRoutes =
   require("./routes/usuarios");
 
+const cajasRoutes = require("./routes/cajas");
+const documentosRoutes = require("./routes/documentos");
+
 const app =
   express();
 
@@ -305,6 +308,9 @@ app.use(
 app.use(
   usuariosRoutes
 );
+
+app.use(cajasRoutes);
+app.use(documentosRoutes);
 
 // =====================================
 // 404

@@ -420,12 +420,13 @@
 
     </div>
 
-    <a
-      href="/ventas"
-      class="back"
-    >
-      ← Volver a ventas
-    </a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+      <a href="/ventas/<%= venta.id %>/ticket" target="_blank" style="padding:9px 12px;border-radius:8px;background:#111827;color:white;text-decoration:none;font-weight:700;">Ticket 80 mm</a>
+      <a href="/ventas/<%= venta.id %>/comprobante" target="_blank" style="padding:9px 12px;border-radius:8px;background:#111827;color:white;text-decoration:none;font-weight:700;">A4 / Imprimir</a>
+      <a href="/ventas/<%= venta.id %>/pdf" target="_blank" style="padding:9px 12px;border-radius:8px;background:#111827;color:white;text-decoration:none;font-weight:700;">PDF</a>
+      <a href="/ventas/<%= venta.id %>/whatsapp" target="_blank" style="padding:9px 12px;border-radius:8px;background:#16a34a;color:white;text-decoration:none;font-weight:700;">WhatsApp</a>
+      <a href="/caja" class="back" style="padding:9px 12px;">Nueva venta</a>
+    </div>
 
   </div>
 

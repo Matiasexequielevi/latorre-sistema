@@ -206,6 +206,11 @@
 </head>
 
 <body>
+<div style="position:fixed;right:22px;bottom:22px;z-index:999;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+<a href="/presupuestos/<%= presupuesto.id %>/comprobante" target="_blank" style="padding:10px 13px;background:#111827;color:white;text-decoration:none;border-radius:9px;font-weight:700;">A4 / Imprimir</a>
+<a href="/presupuestos/<%= presupuesto.id %>/pdf" target="_blank" style="padding:10px 13px;background:#111827;color:white;text-decoration:none;border-radius:9px;font-weight:700;">PDF</a>
+<a href="/presupuestos/<%= presupuesto.id %>/whatsapp" target="_blank" style="padding:10px 13px;background:#16a34a;color:white;text-decoration:none;border-radius:9px;font-weight:700;">WhatsApp</a>
+</div>
 
 <header class="top">
 
