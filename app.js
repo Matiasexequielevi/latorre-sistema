@@ -1,3 +1,5 @@
+process.env.TZ = "America/Argentina/Tucuman";
+
 require("dotenv").config();
 
 const express =

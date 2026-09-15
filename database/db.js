@@ -1,6 +1,13 @@
 const { Pool } = require("pg");
 
 // =====================================
+// ZONA HORARIA DEL SISTEMA
+// =====================================
+
+const TIMEZONE =
+  "America/Argentina/Tucuman";
+
+// =====================================
 // CONFIGURACIÓN POSTGRESQL
 // =====================================
 
@@ -76,6 +83,29 @@ const pool =
   new Pool(configuracion);
 
 // =====================================
+// ZONA HORARIA DE CADA CONEXIÓN
+// =====================================
+
+pool.on(
+  "connect",
+  async (client) => {
+    try {
+      await client.query(
+        `SET TIME ZONE '${TIMEZONE}'`
+      );
+    } catch (error) {
+      console.error(
+        "✗ Error configurando zona horaria PostgreSQL:"
+      );
+
+      console.error(
+        error.message
+      );
+    }
+  }
+);
+
+// =====================================
 // ERRORES INESPERADOS DEL POOL
 // =====================================
 
@@ -102,7 +132,8 @@ async function probarConexion() {
       await pool.query(`
         SELECT
           NOW() AS fecha,
-          current_database() AS base;
+          current_database() AS base,
+          current_setting('TIMEZONE') AS zona_horaria;
       `);
 
     console.log(
@@ -117,6 +148,16 @@ async function probarConexion() {
     console.log(
       "Fecha de la base:",
       resultado.rows[0].fecha
+    );
+
+    console.log(
+      "Zona horaria PostgreSQL:",
+      resultado.rows[0].zona_horaria
+    );
+
+    console.log(
+      "Zona horaria Node:",
+      process.env.TZ
     );
 
     console.log(
