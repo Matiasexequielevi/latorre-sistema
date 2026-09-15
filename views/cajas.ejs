@@ -1,3 +1,997 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>La Torre | Cajas</title><link rel="stylesheet" href="/css/style.css"><style>body{background:#f3f4f6;font-family:Segoe UI,Arial;margin:0;color:#111827}.wrap{max-width:1100px;margin:30px auto;padding:0 20px}.top{display:flex;justify-content:space-between;align-items:center}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.k{background:#f9fafb;padding:14px;border-radius:10px}.k span{color:#6b7280;font-size:12px;display:block}.k strong{font-size:20px}.btn{background:#111827;color:#fff;border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer;text-decoration:none}.inp{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:9px;margin:6px 0 12px}.alert{padding:12px;border-radius:9px;margin:12px 0}.ok{background:#ecfdf3}.err{background:#fef2f2}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:10px;border-bottom:1px solid #eee;text-align:left}@media(max-width:700px){.grid{grid-template-columns:1fr}}</style></head><body><div class="wrap"><div class="top"><div><h1>Control de caja</h1><p>Apertura, cierre y arqueo por empleado.</p></div><a class="btn" href="/dashboard">Volver</a></div><% if(mensaje){%><div class="alert ok"><%=mensaje%></div><%}%><% if(error){%><div class="alert err"><%=error%></div><%}%>
-<% if(!abierta){%><section class="card"><h2>Abrir caja</h2><form method="post" action="/cajas/abrir"><% if(usuario.rol==='dueno'){%><label>Local</label><select class="inp" name="ubicacion_id" required><option value="">Seleccionar...</option><% locales.forEach(l=>{%><option value="<%=l.id%>"><%=l.nombre%></option><%})%></select><%}%><label>Efectivo inicial</label><input class="inp" name="monto_inicial" type="number" min="0" step="0.01" value="0" required><label>Observación</label><input class="inp" name="observaciones" placeholder="Opcional"><button class="btn">Abrir caja</button></form></section><%}else{%><section class="card"><h2>Caja abierta</h2><div class="grid"><div class="k"><span>Sucursal</span><strong><%=abierta.ubicacion%></strong></div><div class="k"><span>Desde</span><strong><%=new Date(abierta.apertura_at).toLocaleString('es-AR')%></strong></div><div class="k"><span>Fondo inicial</span><strong>$<%=Number(abierta.monto_inicial).toLocaleString('es-AR')%></strong></div></div><h3>Ventas por medio de pago</h3><div class="grid"><% resumen.forEach(r=>{%><div class="k"><span><%=r.nombre%> · <%=r.cantidad%> ventas</span><strong>$<%=Number(r.total).toLocaleString('es-AR')%></strong></div><%})%></div><form method="post" action="/cajas/<%=abierta.id%>/cerrar"><h3>Cierre / arqueo</h3><label>Efectivo contado</label><input class="inp" name="efectivo_contado" type="number" min="0" step="0.01" required><label>Observación</label><input class="inp" name="observaciones" placeholder="Opcional"><button class="btn">Cerrar caja</button></form></section><%}%>
-<section class="card"><h2>Historial</h2><table class="table"><thead><tr><th>Apertura</th><th>Usuario</th><th>Sucursal</th><th>Ventas</th><th>Estado</th><th>Diferencia</th></tr></thead><tbody><% cajas.forEach(c=>{%><tr><td><%=new Date(c.apertura_at).toLocaleString('es-AR')%></td><td><%=c.usuario_nombre%></td><td><%=c.ubicacion%></td><td>$<%=Number(c.total_ventas).toLocaleString('es-AR')%></td><td><%=c.estado%></td><td><%=c.diferencia==null?'-':'$'+Number(c.diferencia).toLocaleString('es-AR')%></td></tr><%})%></tbody></table></section></div></body></html>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>La Torre | Resumen de Caja</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --dark: #111827;
+      --dark2: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --bg: #f3f4f6;
+
+      --green: #059669;
+      --green-dark: #047857;
+      --green-bg: #ecfdf5;
+      --green-border: #a7f3d0;
+
+      --orange: #d97706;
+      --orange-bg: #fff7ed;
+      --orange-border: #fed7aa;
+
+      --red: #b91c1c;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #111827;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    /* =====================================================
+       TOPBAR
+    ===================================================== */
+
+    .topbar {
+      min-height: 72px;
+      padding: 0 26px;
+
+      background: var(--dark);
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 3px;
+
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .usuario {
+      text-align: right;
+    }
+
+    .usuario strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .usuario span {
+      display: block;
+      margin-top: 3px;
+
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    /* =====================================================
+       CONTENIDO
+    ===================================================== */
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 22px 50px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* =====================================================
+       BOTONES
+    ===================================================== */
+
+    .btn {
+      display: inline-block;
+
+      border: 0;
+      border-radius: 9px;
+
+      padding: 11px 16px;
+
+      background: var(--dark);
+      color: white;
+
+      font-weight: 700;
+      font-size: 14px;
+
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: var(--dark2);
+    }
+
+    .btn-green {
+      background: var(--green);
+    }
+
+    .btn-green:hover {
+      background: var(--green-dark);
+    }
+
+    /* =====================================================
+       CARDS
+    ===================================================== */
+
+    .card {
+      margin: 16px 0;
+      padding: 22px;
+
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 19px;
+    }
+
+    .card-subtitle {
+      margin: 0 0 20px;
+
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* =====================================================
+       ESTADO DEL TURNO
+    ===================================================== */
+
+    .estado {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      margin-bottom: 20px;
+      padding: 16px;
+
+      background: var(--green-bg);
+
+      border: 1px solid var(--green-border);
+      border-radius: 13px;
+    }
+
+    .estado-icon {
+      width: 42px;
+      height: 42px;
+
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: #d1fae5;
+      color: var(--green-dark);
+
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .estado strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .estado span {
+      display: block;
+
+      margin-top: 4px;
+
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sin-turno {
+      background: var(--orange-bg);
+      border-color: var(--orange-border);
+    }
+
+    .sin-turno .estado-icon {
+      background: #ffedd5;
+      color: var(--orange);
+    }
+
+    /* =====================================================
+       TARJETAS DE INFORMACIÓN
+    ===================================================== */
+
+    .grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 12px;
+    }
+
+    .k {
+      padding: 15px;
+
+      background: #f9fafb;
+
+      border: 1px solid #f1f2f4;
+      border-radius: 11px;
+    }
+
+    .k span {
+      display: block;
+
+      margin-bottom: 7px;
+
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .k strong {
+      display: block;
+
+      font-size: 19px;
+    }
+
+    .section-title {
+      margin: 25px 0 12px;
+
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    /* =====================================================
+       FORMULARIOS
+    ===================================================== */
+
+    .form-box {
+      max-width: 600px;
+    }
+
+    label {
+      display: block;
+
+      margin-bottom: 6px;
+
+      color: #374151;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .inp {
+      width: 100%;
+      min-height: 45px;
+
+      margin-bottom: 14px;
+      padding: 10px 12px;
+
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+
+      background: white;
+
+      font-size: 14px;
+      outline: none;
+    }
+
+    .inp:focus {
+      border-color: var(--dark);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(17, 24, 39, .06);
+    }
+
+    /* =====================================================
+       ARQUEO
+    ===================================================== */
+
+    .arqueo {
+      margin-top: 22px;
+      padding-top: 20px;
+
+      border-top: 1px solid var(--border);
+    }
+
+    /* =====================================================
+       ALERTAS
+    ===================================================== */
+
+    .alert {
+      padding: 13px 16px;
+      margin: 12px 0;
+
+      border-radius: 10px;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ok {
+      background: #ecfdf3;
+      color: #067647;
+
+      border: 1px solid #abefc6;
+    }
+
+    .err {
+      background: #fef2f2;
+      color: var(--red);
+
+      border: 1px solid #fecaca;
+    }
+
+    /* =====================================================
+       HISTORIAL
+    ===================================================== */
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      min-width: 800px;
+
+      border-collapse: collapse;
+    }
+
+    .table th {
+      padding: 11px;
+
+      background: #f9fafb;
+
+      border-bottom:
+        1px solid var(--border);
+
+      color: var(--muted);
+
+      text-align: left;
+
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .table td {
+      padding: 12px 11px;
+
+      border-bottom:
+        1px solid #f1f2f4;
+
+      font-size: 13px;
+    }
+
+    .estado-tag {
+      display: inline-block;
+
+      padding: 5px 9px;
+
+      border-radius: 20px;
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .estado-tag.abierta {
+      background: #ecfdf3;
+      color: #047857;
+    }
+
+    .estado-tag.cerrada {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 750px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page-header {
+        flex-direction: column;
+      }
+
+      .topbar {
+        padding: 14px 18px;
+      }
+
+      .wrap {
+        padding: 20px 14px 40px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     TOPBAR
+====================================================== -->
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <h1>
+      LA TORRE
+    </h1>
+
+    <span>
+      Sistema Multisucursal
+    </span>
+
+  </div>
+
+  <div class="usuario">
+
+    <strong>
+      <%= usuario.nombre %>
+    </strong>
+
+    <span>
+
+      <% if (usuario.rol === 'dueno') { %>
+
+        Dueño
+
+      <% } else { %>
+
+        <%= usuario.ubicacion %>
+
+      <% } %>
+
+    </span>
+
+  </div>
+
+</header>
+
+<!-- =====================================================
+     CONTENIDO
+====================================================== -->
+
+<div class="wrap">
+
+  <!-- ===================================================
+       ENCABEZADO
+  ==================================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>
+        Resumen de caja
+      </h1>
+
+      <p>
+        Apertura, movimientos del turno, arqueo y cierre.
+      </p>
+
+    </div>
+
+    <a
+      class="btn"
+      href="/caja"
+    >
+      ← Volver al Punto de Venta
+    </a>
+
+  </div>
+
+  <!-- ===================================================
+       MENSAJES
+  ==================================================== -->
+
+  <% if (mensaje) { %>
+
+    <div class="alert ok">
+      <%= mensaje %>
+    </div>
+
+  <% } %>
+
+  <% if (error) { %>
+
+    <div class="alert err">
+      <%= error %>
+    </div>
+
+  <% } %>
+
+  <!-- ===================================================
+       SIN TURNO
+  ==================================================== -->
+
+  <% if (!abierta) { %>
+
+    <section class="card">
+
+      <div class="estado sin-turno">
+
+        <div class="estado-icon">
+          !
+        </div>
+
+        <div>
+
+          <strong>
+            Turno sin iniciar
+          </strong>
+
+          <span>
+            Iniciá la jornada de caja antes de comenzar a registrar ventas.
+          </span>
+
+        </div>
+
+      </div>
+
+      <h2>
+        Iniciar turno
+      </h2>
+
+      <p class="card-subtitle">
+        Indicá el efectivo disponible al comenzar la jornada.
+      </p>
+
+      <form
+        method="POST"
+        action="/cajas/abrir"
+        class="form-box"
+      >
+
+        <!-- ===============================================
+             DUEÑO SELECCIONA LOCAL
+        ================================================ -->
+
+        <% if (usuario.rol === 'dueno') { %>
+
+          <label>
+            Local
+          </label>
+
+          <select
+            class="inp"
+            name="ubicacion_id"
+            required
+          >
+
+            <option value="">
+              Seleccionar local...
+            </option>
+
+            <% locales.forEach(local => { %>
+
+              <option value="<%= local.id %>">
+                <%= local.nombre %>
+              </option>
+
+            <% }) %>
+
+          </select>
+
+        <% } %>
+
+        <!-- ===============================================
+             FONDO INICIAL
+        ================================================ -->
+
+        <label>
+          Fondo inicial
+        </label>
+
+        <input
+          class="inp"
+          name="monto_inicial"
+          type="number"
+          min="0"
+          step="0.01"
+          value="0"
+          required
+        >
+
+        <label>
+          Observación
+        </label>
+
+        <input
+          class="inp"
+          name="observaciones"
+          placeholder="Opcional"
+        >
+
+        <button
+          class="btn btn-green"
+          type="submit"
+        >
+          Iniciar turno
+        </button>
+
+      </form>
+
+    </section>
+
+  <% } else { %>
+
+    <!-- =================================================
+         TURNO ACTIVO
+    ================================================== -->
+
+    <section class="card">
+
+      <div class="estado">
+
+        <div class="estado-icon">
+          ✓
+        </div>
+
+        <div>
+
+          <strong>
+            Turno activo
+          </strong>
+
+          <span>
+            La caja está habilitada para registrar ventas.
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- ===============================================
+           DATOS DEL TURNO
+      ================================================ -->
+
+      <div class="grid">
+
+        <div class="k">
+
+          <span>
+            Sucursal
+          </span>
+
+          <strong>
+            <%= abierta.ubicacion %>
+          </strong>
+
+        </div>
+
+        <div class="k">
+
+          <span>
+            Apertura
+          </span>
+
+          <strong>
+
+            <%= new Date(
+              abierta.apertura_at
+            ).toLocaleString(
+              'es-AR'
+            ) %>
+
+          </strong>
+
+        </div>
+
+        <div class="k">
+
+          <span>
+            Fondo inicial
+          </span>
+
+          <strong>
+
+            $<%= Number(
+              abierta.monto_inicial || 0
+            ).toLocaleString(
+              'es-AR',
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }
+            ) %>
+
+          </strong>
+
+        </div>
+
+      </div>
+
+      <!-- ===============================================
+           VENTAS DEL TURNO
+      ================================================ -->
+
+      <div class="section-title">
+        Ventas del turno
+      </div>
+
+      <div class="grid">
+
+        <% resumen.forEach(r => { %>
+
+          <div class="k">
+
+            <span>
+
+              <%= r.nombre %>
+
+              ·
+
+              <%= r.cantidad %>
+
+              venta<%= Number(r.cantidad) === 1 ? '' : 's' %>
+
+            </span>
+
+            <strong>
+
+              $<%= Number(
+                r.total || 0
+              ).toLocaleString(
+                'es-AR',
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }
+              ) %>
+
+            </strong>
+
+          </div>
+
+        <% }) %>
+
+      </div>
+
+      <!-- ===============================================
+           ARQUEO
+      ================================================ -->
+
+      <div class="arqueo">
+
+        <h2>
+          Arqueo y cierre
+        </h2>
+
+        <p class="card-subtitle">
+          Contá el efectivo físico disponible antes de finalizar el turno.
+        </p>
+
+        <form
+          method="POST"
+          action="/cajas/<%= abierta.id %>/cerrar"
+          class="form-box"
+          onsubmit="return confirm('¿Confirmar el cierre de este turno?');"
+        >
+
+          <label>
+            Efectivo contado
+          </label>
+
+          <input
+            class="inp"
+            name="efectivo_contado"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0,00"
+            required
+          >
+
+          <label>
+            Observación de cierre
+          </label>
+
+          <input
+            class="inp"
+            name="observaciones"
+            placeholder="Opcional"
+          >
+
+          <button
+            class="btn"
+            type="submit"
+          >
+            Cerrar turno
+          </button>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  <% } %>
+
+  <!-- ===================================================
+       HISTORIAL
+  ==================================================== -->
+
+  <section class="card">
+
+    <h2>
+      Historial de turnos
+    </h2>
+
+    <p class="card-subtitle">
+      Últimas aperturas y cierres registrados.
+    </p>
+
+    <div class="table-wrap">
+
+      <table class="table">
+
+        <thead>
+
+          <tr>
+            <th>Apertura</th>
+            <th>Usuario</th>
+            <th>Sucursal</th>
+            <th>Ventas</th>
+            <th>Estado</th>
+            <th>Diferencia</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <% if (!cajas.length) { %>
+
+            <tr>
+
+              <td
+                colspan="6"
+                style="
+                  text-align:center;
+                  color:#9ca3af;
+                  padding:30px;
+                "
+              >
+                Todavía no hay turnos registrados.
+              </td>
+
+            </tr>
+
+          <% } %>
+
+          <% cajas.forEach(c => { %>
+
+            <tr>
+
+              <td>
+
+                <%= new Date(
+                  c.apertura_at
+                ).toLocaleString(
+                  'es-AR'
+                ) %>
+
+              </td>
+
+              <td>
+                <%= c.usuario_nombre %>
+              </td>
+
+              <td>
+                <%= c.ubicacion %>
+              </td>
+
+              <td>
+
+                $<%= Number(
+                  c.total_ventas || 0
+                ).toLocaleString(
+                  'es-AR',
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }
+                ) %>
+
+              </td>
+
+              <td>
+
+                <span
+                  class="estado-tag <%= c.estado %>"
+                >
+
+                  <%= c.estado === 'abierta'
+                    ? 'Activo'
+                    : 'Cerrado'
+                  %>
+
+                </span>
+
+              </td>
+
+              <td>
+
+                <% if (c.diferencia == null) { %>
+
+                  -
+
+                <% } else { %>
+
+                  $<%= Number(
+                    c.diferencia
+                  ).toLocaleString(
+                    'es-AR',
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }
+                  ) %>
+
+                <% } %>
+
+              </td>
+
+            </tr>
+
+          <% }) %>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</div>
+
+</body>
+</html>
